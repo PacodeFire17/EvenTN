@@ -1,0 +1,339 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: "EasyLib OpenAPI 3.0"
+  description: API for managing book lendings.
+  license:
+    name: Me
+servers:
+  - url: http://localhost:8000/api/v1
+    description: localhost
+
+
+paths:
+
+  /users:
+    description: here are all types of accounts
+
+  /users/citizens:
+    description: here are all of the accounts of the citizens
+
+    post:
+      summary: creates a new citizen account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: user created
+
+    get:
+      summary: returns the info of the {id} citizen
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+          description: the fetch has been successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: the search has failed
+
+  /users/citizens/{id}:
+    description: the booking of the {id} citizen
+
+    get:
+      summary: returns the booking that the {id} made
+      responses:
+        "200":
+          description: the list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+  
+  /users/organizations:
+    description: a list of all the organizations
+
+    get:
+      summary: returns a list of all the organizations
+      responses:
+        "200":
+          description: a list of all of the organizations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/User"
+    
+    post:
+      summary: creates a new organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: account created
+
+  /users/organizations/{id}:
+    description: all the info of the {id} organization
+
+    get:
+      summary: returns the information of the {id} organization
+      responses:
+        "200":
+          description: the informations exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+
+  /users/organizations/{id}/events:
+    description: the events that the {id} organization made
+
+    get:
+      summary: returns the list of events that the {id} organization made
+      responses:
+        "200":
+          description: the list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+
+  /users/townHall:
+    description: here are all of the accounts of the town hall
+
+    post:
+      summary: creates a new admin account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/User"
+      responses:
+        "201":
+          description: user created
+
+    get:
+      summary: returns the info of the {id} admin
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+      responses:
+        "200":
+          description: the fetch has been successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "404":
+          description: the search has failed
+
+  /events:
+    description: a list of all the events
+
+    get:
+      summary: returns a list of all the events
+      responses:
+        "200":
+          description: the list of events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+    post:
+      summary: adds a new event to the list
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Event"
+      responses:
+        "201":
+          description: event added
+
+  /events/tags:
+    description: used to search through tags
+
+    get:
+      summary: search events with tag {tag}
+      parameters:
+        - in: query
+          name: tag
+          schema:
+            type: array
+            items:
+              $ref: "#/components/schemas/Tag"
+          required: true
+      responses:
+        "200":
+          description: a list of events with that tag(s)
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+  
+  /events/{id}:
+    description: all the information about the event
+
+    get:
+      summary: gets all the information about the {id} event
+      responses:
+        "200":
+          description: the event {id}
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+
+    delete:
+      summary: deletes the event {id}
+      description: only accessible to the organizer and townHall
+      responses:
+        "200":
+          description: account deleted
+  
+  /events/{id}/bookings:
+    description: show all the booking made to the event
+
+    get:
+      summary: returns the list of bookings made
+      description: should be accessible only to the organizer
+      responses:
+        "200":
+          description: the list of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+
+    post:
+      summary: makes a booking
+      description: only usable if the account is the citizen type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Booking"
+      responses:
+        "201":
+          description: made the booking
+        "403": # don't know
+          description: the event is full
+
+    delete:
+      summary: deletes the booking
+      description: the only one that can delete the booking is the one who made it in the first place
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200": 
+          description: booking deleted
+
+            
+          
+
+
+components:
+  schemas:
+
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [citizen,organization,townHall]
+        self:
+          type: string # URL of the same citizen
+
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        startDate: #per le date si potrebbe fare un componente e poi fare $ref:
+          type: string
+        endDate:
+          type: string
+        description:
+          type: string
+        needBooking:
+          type: boolean
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        self:
+          type: string # URL of the same event
+        organizer:
+          type: string # URL of the organizer
+        bookings:
+          type: array
+          items:
+            $ref: "#/components/schemas/Booking"
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+        citizen:
+          type: string # URL of the booker
+        howMany: # the number of seats booked
+          type: integer
+        self:
+          type: string # URL of the same thing
+
+    Tag:
+      type: object #potrebbe non essere un oggetto
+      properties:
+        name:
+          type: string
+          enum: [musica,parco] #need to change only here if we add more tags
+        id:
+          type: integer
+          enum: [0,1]
+

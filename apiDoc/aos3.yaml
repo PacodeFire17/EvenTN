@@ -1,19 +1,50 @@
 openapi: 3.0.0
 info:
   version: '1.0'
-  title: "EasyLib OpenAPI 3.0"
-  description: API for managing book lendings.
-  license:
-    name: Me
-servers:
-  - url: http://localhost:8000/api/v1
-    description: localhost
-
+  title: "EvenTN OpenAPI 3.0"
+  description: API for managing events.
 
 paths:
 
-  /users:
-    description: here are all types of accounts
+  /users/authenticate:
+    description: used to authenticate the user
+
+    post:
+      summary: authenticates the user through username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: user authenticated correctly
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  AuthNToken:
+                    type: string
+        "400":
+          description: the user does not exist
+        "401":
+          description: the authencation procedure has gone wrong
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
 
   /users/citizens:
     description: here are all of the accounts of the citizens
@@ -28,40 +59,72 @@ paths:
               $ref: "#/components/schemas/User"
       responses:
         "201":
-          description: user created
+          description: resource created successfuly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Citizen"
+        "500":
+          description: resource not created
 
     get:
-      summary: returns the info of the {id} citizen
+      summary: returns the info of the {id} citizen in the query
+      description: The {id} is inserted via query. For doing so, the user must be authenticated
       parameters:
         - in: query
           name: id
           schema:
             type: integer
           required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200":
-          description: the fetch has been successful
+          description: the resource has been found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/Citizen"
         "404":
-          description: the search has failed
+          description: resource not found
+        "401":
+          description: user not authenticated
 
-  /users/citizens/{id}:
+  /users/citizens/{id}/bookings:
     description: the booking of the {id} citizen
 
     get:
-      summary: returns the booking that the {id} made
+      summary: returns the booking that the {id} citizen made
+      description: The user must be authenticated to do so
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200":
-          description: the list
+          description: the resource has been found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Booking"
+        "401":
+          description: user not authenticated
+        "404":
+          description: resource not found
   
   /users/organizations:
     description: a list of all the organizations
@@ -70,13 +133,15 @@ paths:
       summary: returns a list of all the organizations
       responses:
         "200":
-          description: a list of all of the organizations
+          description: the resource has been found
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/User"
+                  $ref: "#/components/schemas/Organization"
+        "404":
+          description: resource not found
     
     post:
       summary: creates a new organization
@@ -88,41 +153,76 @@ paths:
               $ref: "#/components/schemas/User"
       responses:
         "201":
-          description: account created
+          description: resource created successfuly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organization"
+        "500":
+          description: resource not created
 
   /users/organizations/{id}:
     description: all the info of the {id} organization
 
     get:
       summary: returns the information of the {id} organization
+      description: Must be authenticated to do so
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200":
-          description: the informations exist
+          description: the resource has been found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/Organization"
+        "401":
+          description: user not authenticated
+        "404":
+          description: resource not found
 
   /users/organizations/{id}/events:
     description: the events that the {id} organization made
 
     get:
       summary: returns the list of events that the {id} organization made
+      description: Must be authenticated to do so
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200":
-          description: the list
+          description: the resource has been found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Event"
+        "401":
+          description: user not authenticated
+        "404":
+          description: resource not found
 
   /users/townHall:
     description: here are all of the accounts of the town hall
 
     post:
-      summary: creates a new admin account
+      summary: creates a new town hall account
+      description: Only the admin can call this resource
       requestBody:
         required: true
         content:
@@ -131,25 +231,43 @@ paths:
               $ref: "#/components/schemas/User"
       responses:
         "201":
-          description: user created
+          description: resource created successfuly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TownHall"
+        "500":
+          description: resource not created
 
     get:
       summary: returns the info of the {id} admin
+      description: The {id} is inserted via query. Must be authenticated to do so
       parameters:
         - in: query
           name: id
           schema:
             type: integer
           required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200":
-          description: the fetch has been successful
+          description: the resource has been found
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/User"
+                $ref: "#/components/schemas/TownHall"
         "404":
-          description: the search has failed
+          description: resource not found
+        "401":
+          description: user not authenticated
 
   /events:
     description: a list of all the events
@@ -158,111 +276,216 @@ paths:
       summary: returns a list of all the events
       responses:
         "200":
-          description: the list of events
+          description: the resource has been found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Event"
+        "404":
+          description: resource not found
+
     post:
       summary: adds a new event to the list
+      description: Must be an authenticated organizer to do so
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Event"
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+                Event:
+                  $ref: "#/components/schemas/Event"
       responses:
         "201":
-          description: event added
+          description: resource added successfuly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: user not authenticated
+        "500":
+          description: resource not created
 
-  /events/tags:
-    description: used to search through tags
+  /event/search/type:
+    description: used to search with words
 
     get:
-      summary: search events with tag {tag}
+      summary: search events with {word} in the name
+      description: The word is inserted via query
       parameters:
         - in: query
-          name: tag
+          name: name
           schema:
-            type: array
-            items:
-              $ref: "#/components/schemas/Tag"
+            type: string
           required: true
       responses:
         "200":
-          description: a list of events with that tag(s)
+          description: the resource has been found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Event"
+        "404":
+          description: resource not found
+
+
+  /events/search/tags:
+    description: used to search through tags
+
+    get:
+      summary: search events with tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: # all the tags inserted
+                type: string 
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+        "404":
+          description: resource not found
   
   /events/{id}:
-    description: all the information about the event
+    description: all the information about the {id} event
 
     get:
       summary: gets all the information about the {id} event
       responses:
         "200":
-          description: the event {id}
+          description: the resource has been found
           content:
             application/json:
               schema:
                 $ref: "#/components/schemas/Event"
+        "404":
+          description: resource not found
 
     delete:
       summary: deletes the event {id}
-      description: only accessible to the organizer and townHall
+      description: Only accessible to the organizer and townHall. Must be authenticated to do so. Returns the deleted event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200":
-          description: account deleted
+          description: resource deleted successfuly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: user not authenticated
+        "500":
+          description: could not delete the resource
+          
   
   /events/{id}/bookings:
     description: show all the booking made to the event
 
     get:
       summary: returns the list of bookings made
-      description: should be accessible only to the organizer
+      description: Should be accessible only to the organizer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200":
-          description: the list of bookings
+          description: the resource has been found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: "#/components/schemas/Booking"
+        "401":
+          description: user not authenticated
+        "404":
+          description: resource not found
 
     post:
       summary: makes a booking
-      description: only usable if the account is the citizen type
+      description: Only usable if the account is the citizen type
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/Booking"
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+                Booking:
+                  $ref: "#/components/schemas/Booking"
       responses:
         "201":
-          description: made the booking
-        "403": # don't know
-          description: the event is full
+          description: resource created successfuly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "500":
+          description: resource not created
+        "401":
+          description: user not authenticated
 
     delete:
-      summary: deletes the booking
-      description: the only one that can delete the booking is the one who made it in the first place
+      summary: deletes the {id} booking
+      description: The only one that can delete the booking is the one who made it in the first place. The id of the booking is inserted via query
       parameters:
         - in: query
           name: id
           required: true
           schema:
             type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
       responses:
         "200": 
-          description: booking deleted
+          description: resource deleted successfuly
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "500":
+          description: could not delete the resource
+        "401":
+          description: user not authenticated
 
             
           
@@ -275,23 +498,50 @@ components:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         username:
           type: string
         password:
           type: string
-        role:
-          type: string
-          enum: [citizen,organization,townHall]
         self:
           type: string # URL of the same citizen
 
+    Citizen:
+      type: object
+      properties:
+        information:
+          $ref: "#/components/schemas/User"
+        role:
+          type: string
+          enum: [citizen]
+        bookings: # the Id of the bookings made from the citizen
+          type: array
+          items:
+            type: string
+        
+    Organization:
+      type: object
+      properties:
+        information:
+          $ref: "#/components/schemas/User"
+        role:
+          type: string
+          enum: [organization]
+
+    TownHall:
+      type: object
+      properties:
+        information:
+          $ref: "#/components/schemas/User"
+        role:
+          type: string
+          enum: [townHall]
 
     Event:
       type: object
       properties:
         id:
-          type: integer
+          type: string
         name:
           type: string
         startDate: #per le date si potrebbe fare un componente e poi fare $ref:
@@ -305,35 +555,26 @@ components:
         tags:
           type: array
           items:
-            $ref: "#/components/schemas/Tag"
-        self:
-          type: string # URL of the same event
-        organizer:
-          type: string # URL of the organizer
-        bookings:
+            type: string
+        organizerId:
+          type: string # id of the organizer
+        bookings: # the Id of the bookings made for the event
           type: array
           items:
-            $ref: "#/components/schemas/Booking"
+            type: string
+        self:
+          type: string # URL of the same event
 
     Booking:
       type: object
       properties:
         id:
-          type: integer
-        citizen:
-          type: string # URL of the booker
+          type: string
+        citizenId:
+          type: string # id of the booker
         howMany: # the number of seats booked
           type: integer
+        eventId: # the event for which the booking is made
+          type: string
         self:
           type: string # URL of the same thing
-
-    Tag:
-      type: object #potrebbe non essere un oggetto
-      properties:
-        name:
-          type: string
-          enum: [musica,parco] #need to change only here if we add more tags
-        id:
-          type: integer
-          enum: [0,1]
-

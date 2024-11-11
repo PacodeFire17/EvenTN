@@ -1,1 +1,2 @@
-# EventTN
+# EvenTN
+Code for EvenTN

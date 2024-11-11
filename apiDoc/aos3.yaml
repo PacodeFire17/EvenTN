@@ -6,6 +6,83 @@ info:
 
 paths:
 
+  /users:
+    description: all the action connected to the user
+    post:
+      summary: creates a new account
+      description: For the townhall account, the creator must be an admin and must send a valid authencation token in the query
+      parameters:
+        - in: query # check if the creator is an admin in the case of a creation of a town hall account, if the account created is a different type the authentication token is not required
+          name: AuthNToken
+          schema:
+            type: string
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+                role:
+                  type: string
+                  enum: [citizen,organization,townhall]
+      responses:
+        "201":
+          description: resource created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+        "401":
+          description: user not authenticated
+        "500":
+          description: resource not created
+
+    get:
+      summary: returns the info of the {id} user
+      description: The {id} is inserted via query. For doing so, the user must be authenticated
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  password:
+                    type: string
+                  role:
+                    type: string
+                    enum: [citizen,organization,townhall]
+        "404":
+          description: resource not found
+        "401":
+          description: user not authenticated
+
   /users/authenticate:
     description: used to authenticate the user
 
@@ -46,63 +123,12 @@ paths:
                   success:
                     type: boolean
 
-  /users/citizens:
-    description: here are all of the accounts of the citizens
-
-    post:
-      summary: creates a new citizen account
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        "201":
-          description: resource created successfuly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User" # citizen user
-        "500":
-          description: resource not created
-
-    get:
-      summary: returns the info of the {id} citizen in the query
-      description: The {id} is inserted via query. For doing so, the user must be authenticated
-      parameters:
-        - in: query
-          name: id
-          schema:
-            type: integer
-          required: true
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                AuthNToken:
-                  type: string
-      responses:
-        "200":
-          description: the resource has been found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User" # citizen user
-        "404":
-          description: resource not found
-        "401":
-          description: user not authenticated
-
-  /users/citizens/{id}/bookings:
+  /users/{id}/bookings:
     description: the booking of the {id} citizen
 
     get:
       summary: returns the booking that the {id} citizen made
-      description: The user must be authenticated to do so
+      description: The user must be authenticated to do so and must be a citizen account
       requestBody:
         required: true
         content:
@@ -139,61 +165,24 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/User" # organization user
-        "404":
-          description: resource not found
-    
-    post:
-      summary: creates a new organization
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        "201":
-          description: resource created successfuly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User" # organization user
-        "500":
-          description: resource not created
-
-  /users/organizations/{id}:
-    description: all the info of the {id} organization
-
-    get:
-      summary: returns the information of the {id} organization
-      description: Must be authenticated to do so
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                AuthNToken:
-                  type: string
-      responses:
-        "200":
-          description: the resource has been found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User" # organization user
-        "401":
-          description: user not authenticated
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string
+                    role:
+                      type: string
+                      enum: [citizen,organization,townhall]
         "404":
           description: resource not found
 
-  /users/organizations/{id}/events:
+  /users/{id}/events:
     description: the events that the {id} organization made
 
     get:
       summary: returns the list of events that the {id} organization made
-      description: Must be authenticated to do so
+      description: Must be authenticated to do so and the account must be an organization
       requestBody:
         required: true
         content:
@@ -216,64 +205,19 @@ paths:
           description: user not authenticated
         "404":
           description: resource not found
-
-  /users/townHall:
-    description: here are all of the accounts of the town hall
-
-    post:
-      summary: creates a new town hall account
-      description: Only the admin can call this resource
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/User"
-      responses:
-        "201":
-          description: resource created successfuly
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User" # town hall user
-        "500":
-          description: resource not created
-
-    get:
-      summary: returns the info of the {id} admin
-      description: The {id} is inserted via query. Must be authenticated to do so
-      parameters:
-        - in: query
-          name: id
-          schema:
-            type: integer
-          required: true
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                AuthNToken:
-                  type: string
-      responses:
-        "200":
-          description: the resource has been found
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/User" # Town Hall user
-        "404":
-          description: resource not found
-        "401":
-          description: user not authenticated
 
   /events:
     description: a list of all the events
 
     get:
       summary: returns a list of all the events
+      description: In the query it can be specified if the events have to be approved or not. If not specified, the default is true
+      parameters:
+        - in: query
+          name: approved
+          schema:
+            type: boolean
+          required: false
       responses:
         "200":
           description: the resource has been found
@@ -282,7 +226,63 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Event"
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    startDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    endDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    location:
+                      type: object
+                      properties:
+                        via:
+                          type: string
+                        number:
+                          type: integer
+                        city:
+                          type: string
+                        CAP:
+                          type: integer
+                        region:
+                          type: string
+                        country:
+                          type: string
+                    description:
+                      type: string
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    organizerId:
+                      type: string
         "404":
           description: resource not found
 
@@ -299,10 +299,62 @@ paths:
                 AuthNToken:
                   type: string
                 Event:
-                  $ref: "#/components/schemas/Event"
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    startDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    endDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    location:
+                      type: object
+                      properties:
+                        via:
+                          type: string
+                        number:
+                          type: integer
+                        city:
+                          type: string
+                        CAP:
+                          type: integer
+                        region:
+                          type: string
+                        country:
+                          type: string
+                    description:
+                      type: string
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
       responses:
         "201":
-          description: resource added successfuly
+          description: resource added successfully
           content:
             application/json:
               schema:
@@ -332,10 +384,65 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Event"
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    startDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    endDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    location:
+                      type: object
+                      properties:
+                        via:
+                          type: string
+                        number:
+                          type: integer
+                        city:
+                          type: string
+                        CAP:
+                          type: integer
+                        region:
+                          type: string
+                        country:
+                          type: string
+                    description:
+                      type: string
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    organizerId:
+                      type: string
         "404":
           description: resource not found
-
 
   /events/search/tags:
     description: used to search through tags
@@ -358,7 +465,63 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Event"
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    startDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    endDate:
+                      type: object
+                      properties:
+                        day: 
+                          type: integer
+                        month: 
+                          type: integer
+                        year:
+                          type: integer
+                        hour:
+                          type: integer
+                        minutes:
+                          type: integer
+                    location:
+                      type: object
+                      properties:
+                        via:
+                          type: string
+                        number:
+                          type: integer
+                        city:
+                          type: string
+                        CAP:
+                          type: integer
+                        region:
+                          type: string
+                        country:
+                          type: string
+                    description:
+                      type: string
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    organizerName:
+                      type: string
         "404":
           description: resource not found
   
@@ -373,9 +536,89 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Event"
+                type: object
+                properties:
+                  name:
+                    type: string
+                  startDate:
+                    type: object
+                    properties:
+                      day: 
+                        type: integer
+                      month: 
+                        type: integer
+                      year:
+                        type: integer
+                      hour:
+                          type: integer
+                      minutes:
+                          type: integer
+                  endDate:
+                    type: object
+                    properties:
+                      day: 
+                        type: integer
+                      month: 
+                        type: integer
+                      year:
+                        type: integer
+                      hour:
+                          type: integer
+                      minutes:
+                          type: integer
+                  location:
+                    type: object
+                    properties:
+                      via:
+                        type: string
+                      number:
+                        type: integer
+                      city:
+                        type: string
+                      CAP:
+                        type: integer
+                      region:
+                        type: string
+                      country:
+                        type: string
+                  description:
+                    type: string
+                  needBooking:
+                    type: boolean
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                  organizerName:
+                    type: string
+                  approved:
+                    type: boolean
+                  resources:
+                    type: string
         "404":
           description: resource not found
+
+    post:
+      summary: approves the event
+      description: Must be authenticated to do so
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: resource created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: user not authenticated
 
     delete:
       summary: deletes the event {id}
@@ -391,7 +634,7 @@ paths:
                   type: string
       responses:
         "200":
-          description: resource deleted successfuly
+          description: resource deleted successfully
           content:
             application/json:
               schema:
@@ -444,10 +687,15 @@ paths:
                 AuthNToken:
                   type: string
                 Booking:
-                  $ref: "#/components/schemas/Booking"
+                  type: object
+                  properties:
+                    citizenId:
+                      type: string
+                    howMany:
+                      type: integer
       responses:
         "201":
-          description: resource created successfuly
+          description: resource created successfully
           content:
             application/json:
               schema:
@@ -477,7 +725,7 @@ paths:
                   type: string
       responses:
         "200": 
-          description: resource deleted successfuly
+          description: resource deleted successfully
           content:
             application/json:
               schema:
@@ -505,6 +753,7 @@ components:
           type: string
         role:
           type: string
+          enum: [citizen,organization,townhall]
         self:
           type: string # URL of the same User
 
@@ -515,12 +764,47 @@ components:
           type: string
         name:
           type: string
-        startDate: #per le date si potrebbe fare un componente e poi fare $ref:
-          type: string
+        startDate:
+          type: object
+          properties:
+            day: 
+              type: integer
+            month: 
+              type: integer
+            year:
+              type: integer
+            hour:
+              type: integer
+            minutes:
+              type: integer
         endDate:
-          type: string
+          type: object
+          properties:
+            day: 
+              type: integer
+            month: 
+              type: integer
+            year:
+              type: integer
+            hour:
+              type: integer
+            minutes:
+              type: integer
         location:
-          type: string
+          type: object
+          properties:
+            via:
+              type: string
+            number:
+              type: integer
+            city:
+              type: string
+            CAP:
+              type: integer
+            region:
+              type: string
+            country:
+              type: string
         description:
           type: string
         needBooking:
@@ -531,10 +815,14 @@ components:
             type: string
         organizerId:
           type: string # id of the organizer
+        approved: # the event can be approved by the town hall
+          type: boolean
         bookings: # the Id of the bookings made for the event
           type: array
           items:
             type: string
+        resources:
+          type: string
         self:
           type: string # URL of the same event
 

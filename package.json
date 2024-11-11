@@ -1,0 +1,26 @@
+{
+  "name": "eventtn",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo this works",
+    "dep": "node index.js",
+    "dev": "node -r dotenv/config index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PacodeFire17/EventTN.git"
+  },
+  "author": "Federico Santin, Davide Gloder, Luca Nardon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PacodeFire17/EventTN/issues"
+  },
+  "homepage": "https://github.com/PacodeFire17/EventTN#readme",
+  "dependencies": {
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.1"
+  }
+}

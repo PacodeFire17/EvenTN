@@ -63,7 +63,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Citizen"
+                $ref: "#/components/schemas/User" # citizen user
         "500":
           description: resource not created
 
@@ -91,7 +91,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Citizen"
+                $ref: "#/components/schemas/User" # citizen user
         "404":
           description: resource not found
         "401":
@@ -139,7 +139,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/Organization"
+                  $ref: "#/components/schemas/User" # organization user
         "404":
           description: resource not found
     
@@ -157,7 +157,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
+                $ref: "#/components/schemas/User" # organization user
         "500":
           description: resource not created
 
@@ -182,7 +182,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Organization"
+                $ref: "#/components/schemas/User" # organization user
         "401":
           description: user not authenticated
         "404":
@@ -235,7 +235,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TownHall"
+                $ref: "#/components/schemas/User" # town hall user
         "500":
           description: resource not created
 
@@ -263,7 +263,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/TownHall"
+                $ref: "#/components/schemas/User" # Town Hall user
         "404":
           description: resource not found
         "401":
@@ -503,39 +503,10 @@ components:
           type: string
         password:
           type: string
+        role:
+          type: string
         self:
-          type: string # URL of the same citizen
-
-    Citizen:
-      type: object
-      properties:
-        information:
-          $ref: "#/components/schemas/User"
-        role:
-          type: string
-          enum: [citizen]
-        bookings: # the Id of the bookings made from the citizen
-          type: array
-          items:
-            type: string
-        
-    Organization:
-      type: object
-      properties:
-        information:
-          $ref: "#/components/schemas/User"
-        role:
-          type: string
-          enum: [organization]
-
-    TownHall:
-      type: object
-      properties:
-        information:
-          $ref: "#/components/schemas/User"
-        role:
-          type: string
-          enum: [townHall]
+          type: string # URL of the same User
 
     Event:
       type: object
@@ -547,6 +518,8 @@ components:
         startDate: #per le date si potrebbe fare un componente e poi fare $ref:
           type: string
         endDate:
+          type: string
+        location:
           type: string
         description:
           type: string

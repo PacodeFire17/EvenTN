@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PacodeFire17/EventTN.git"
+    "url": "https://github.com/PacodeFire17/EvenTN"
   },
   "author": "Federico Santin, Davide Gloder, Luca Nardon",
   "license": "ISC",
@@ -22,5 +22,8 @@
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1"
+  },
+  "devDependencies": {
+    "dotenv": "^16.4.5"
   }
 }

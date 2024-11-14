@@ -13,4 +13,4 @@ mongoose.connect(DB_URL).then(()=>{
 
     app.listen(PORT,()=>{console.log('listening on port: %d', PORT)});
     
-}).catch((err)=>console.log('Failed to connect to database: %d', DB_URL));
+}).catch((err)=>console.log('Failed to connect to database: ' + DB_URL));

@@ -706,8 +706,12 @@ paths:
                 $ref: "#/components/schemas/Booking"
         "500":
           description: resource not created
+        "400":
+          description: bad request
         "401":
           description: user not authenticated
+        "404":
+          description: resource not found
 
     delete:
       summary: deletes the {id} booking
@@ -809,6 +813,10 @@ components:
               type: string
             country:
               type: string
+        maxSeats: 
+          type: integer
+        bookedSeats:
+          type: integer
         description:
           type: string
         needBooking:

@@ -12,7 +12,7 @@ const deleteEvent = async (req, res) => {
 
     // Verifica se l'utente è l'organizzatore dell'evento o un operatore comunale
     if (event.organizerId.toString() !== req.user.id.toString() && (req.user.role !== 'townhall' || req.user.role !== 'organization')) {
-      return res.status(403).json({ message: 'Access denied: you are not allowed to delete this event.' });
+      return res.status(401).json({ message: 'Access denied: you are not allowed to delete this event.' });
     }
 
     // Elimina l'evento

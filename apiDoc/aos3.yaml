@@ -641,6 +641,8 @@ paths:
                 $ref: "#/components/schemas/Event"
         "401":
           description: user not authenticated
+        "404":
+          description: resource not found
         "500":
           description: could not delete the resource
           

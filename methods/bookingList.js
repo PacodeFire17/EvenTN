@@ -14,7 +14,7 @@ const bookingList = async (req, res) => {
     }
 
     // Verifica che l'utente che richiede i dati sia l'organizzatore dell'evento
-    if (event.organizerId.toString() !== req.user.id.toString()) {
+    if (event.organizerId.toString() !== req.user.id.toString() && req.user.role !== 'organization') {
       return res.status(401).json({ message: 'Access denied: you are not allowed to see the booking list of this event.' });
     }
 
@@ -32,3 +32,8 @@ const bookingList = async (req, res) => {
 };
 
 module.exports = { bookingList };
+
+//route da mettere in app.js per richiamare bookingList
+//app.get('/events/:id/bookings', authenticate, authorize(['organization']), bookingList);
+
+

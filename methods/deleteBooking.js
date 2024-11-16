@@ -16,7 +16,7 @@ const cancelBooking = async (req, res) => {
       return res.status(404).json({ message: 'Event not found.' });
     }
     // Verifica che l'utente che richiede l'azione sia un cittadino
-    if (event.organizerId.toString() !== req.user.id.toString() && req.user.role !== 'citizen') {
+    if (req.user.role !== 'citizen') {
         return res.status(401).json({ message: 'Access denied: you are not allowed to delete a booking for this event.' });
     }
 

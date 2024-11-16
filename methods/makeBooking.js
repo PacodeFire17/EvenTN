@@ -19,7 +19,7 @@ const makeBooking = async (req, res) => {
     }
 
     // Verifica che l'utente che richiede la prenotazione sia un cittadino
-    if (event.organizerId.toString() !== req.user.id.toString() && req.user.role !== 'citizen') {
+    if (req.user.role !== 'citizen') {
         return res.status(401).json({ message: 'Access denied: you are not allowed to book seats for this event.' });
     }
 

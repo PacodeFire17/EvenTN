@@ -742,6 +742,10 @@ paths:
           description: could not delete the resource
         "401":
           description: user not authenticated
+        "400":
+          description: bad request
+        "404":
+          description: resource not found
 
             
           

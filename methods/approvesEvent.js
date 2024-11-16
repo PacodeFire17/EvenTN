@@ -64,8 +64,8 @@ module.exports = { approveEvent, rejectEvent };
 
 //route da mettere in app.js 
 //per approvare un evento
-//router.put('/events/:id/approve', authenticate, isTownhallOperator, approveEvent);
+//router.put('/events/:id', authenticate, authorize('townhall'), approveEvent);
 
 //per rifiutare un evento
-//router.put('/events/:id/reject', authenticate, isTownhallOperator, rejectEvent);
+//router.put('/events/:id', authenticate, authorize('townhall'), rejectEvent);
 

@@ -3,36 +3,37 @@ var Schema = mongoose.Schema;
 
 // set up a mongoose model
 const dateSchema = new mongoose.Schema({
-    day: { type: Number, required: true },
-    month: { type: Number, required: true },
-    year: { type: Number, required: true },
-    hour: { type: Number, required: true },
-    minutes: { type: Number, required: true }
-    });
+    day: Number,
+    month: Number,
+    year: Number,
+    hour: Number,
+    minutes: Number
+});
       
-    const locationSchema = new mongoose.Schema({
-    via: { type: String, required: true },
-    number: { type: Number, required: true },
-    city: { type: String, required: true },
-    CAP: { type: Number, required: true },
-    region: { type: String, required: true },
-    country: { type: String, required: true }
-    });
+const locationSchema = new mongoose.Schema({
+    via: String,
+    number: Number,
+    city: String,
+    CAP: Number,
+    region: String,
+    country: String
+});
       
-    const eventSchema = new mongoose.Schema({
-    name: { type: String, required: true },
-    startDate: { type: dateSchema, required: true },
-    endDate: { type: dateSchema, required: true },
-    location: { type: locationSchema, required: true },
-    maxSeats: { type: Number, required: true },
-    bookedSeats: { type: Number, default: 0 },
-    description: { type: String },
-    needBooking: { type: Boolean, required: true },
-    tags: { type: [String] },
-    organizerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
-    approved: { type: Boolean, default: false },
-    bookings: { type: [mongoose.Schema.Types.ObjectId], ref: 'Booking' },
-    resources: { type: String },
-    self: { type: String }
-    });
-module.exports=eventSchema;
+const eventSchema = new mongoose.Schema({
+    name: String,
+    startDate: dateSchema,
+    endDate: dateSchema,
+    location: locationSchema,
+    maxSeats: Number,
+    bookedSeats: Number,
+    description: String,
+    needBooking: Boolean,
+    tags: [String],
+    organizerId: { type: mongoose.Schema.Types.ObjectId, ref: 'user'},
+    approved: Boolean,
+    bookings: { type: [mongoose.Schema.Types.ObjectId], ref: 'booking' },
+    resources: String,
+    self: String
+});
+
+module.exports=mongoose.model('event',eventSchema);

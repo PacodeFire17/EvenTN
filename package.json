@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo this works",
     "dep": "node index.js",
-    "dev": "node -r dotenv/config index.js"
+    "dev": "node -r dotenv/config index.js",
+    "init": "node -r dotenv/config ./Test/CreateDB.js"
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/PacodeFire17/EventTN#readme",
   "dependencies": {
+    "crypto": "^1.0.1",
     "express": "^4.21.1",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.1"

@@ -1,12 +1,9 @@
 const express = require('express');
-const tokenChecker = require('../tokenChecker');
 const bookModel = require('../../models/bookings');
 const eventModel = require('../../models/Event');
-const router = express.Router();
+const router = express.Router({mergeParams:true});
 
 // tutti i metodi per /users/:id
-
-router.use(tokenChecker);
 
 router.get('/bookings',async (req,res)=>{
     if(req.params.id != req.loggedUser.id) res.status(401).send('user not authenticated');
@@ -22,6 +19,7 @@ router.get('/bookings',async (req,res)=>{
                                         endDate: booking.eventId.endDate,
                                         location: booking.eventId.location,
                                         description: booking.eventId.description,
+                                        image: booking.eventId.image,
                                         tags: booking.eventId.tags})
                                     });
         res.status(200).json(retV);

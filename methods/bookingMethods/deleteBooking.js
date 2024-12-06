@@ -1,46 +1,52 @@
-const Event = require('../models/Event');
-const Booking = require('../models/Booking');
+const Event = require('../../models/Event');
+const Booking = require('../../models/bookings');
 
 const cancelBooking = async (req, res) => {
-  const eventId = req.query.id;  // Ottieni l'ID dell'evento dalla query string
-  const userId = req.user.id;  // ID dell'utente loggato
+  const eventId = req.params.id;  // Ottieni l'ID dell'evento dalla query string
+  const userId = req.loggedUser.id;  // ID dell'utente loggato
+  const bookingId = req.query.id; // ID della prenotazione
 
   if (!eventId) {
-    return res.status(400).json({ message: 'ID not provided.' });
+    res.status(400).send('bad request');
   }
 
   try {
     // Verifica se l'evento esiste
     const event = await Event.findById(eventId);
     if (!event) {
-      return res.status(404).json({ message: 'Event not found.' });
+      return res.status(404).send('resource not found');
     }
     // Verifica che l'utente che richiede l'azione sia un cittadino
-    if (req.user.role !== 'citizen') {
-        return res.status(401).json({ message: 'Access denied: you are not allowed to delete a booking for this event.' });
+    if (req.loggedUser.role !== 'citizen') {
+      return res.status(401).send('user not authenticated');
     }
 
     // Trova la prenotazione dell'utente per l'evento
-    const booking = await Booking.findOne({ citizenId: userId, eventId: eventId });
+    const booking = await Booking.findOne({ eventId:eventId, citizenId:userId });
     if (!booking) {
-      return res.status(404).json({ message: 'Booking not found.' });
+      return res.status(404).send('resource not found');
     }
 
     // Elimina la prenotazione
-    await booking.remove();
+    if(bookingId == booking._id){
+      //mi salvo la prenotazione da eliminare
+      const retV = booking;
 
-    // Rimuovi la prenotazione anche dalla lista delle prenotazioni dell'evento
-    event.bookings.pull(booking.id);
-    await event.save();
+      await booking.deleteOne({_id:booking._id});
 
-    res.status(200).json({ message: 'Booking deleted successfully.' });
+      // Rimuovi la prenotazione anche dalla lista delle prenotazioni dell'evento
+      event.bookedSeats -= retV.howMany;
+      event.bookings.pull(booking.id);
+      await event.save();
+
+      return res.status(200).json(retV);
+
+    } else return res.status(402).send('user not authenticated');
+
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Server internal error.' });
+    return res.status(500).send('could not delete the resource');
   }
 };
 
-module.exports = { cancelBooking };
-
-//route da mettere in app.js
-//router.delete('/events/:id/booking', authenticate, authorize('citizen'), cancelBooking);
+module.exports = cancelBooking;

@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const express = require('express');
-const uMethods = require('./methods/userMethods');
+const uMethods = require('./methods/userMethods/userMethods');
+const eMethods = require('./methods/eventMethods/eventMethods');
 const app = express();
 
 const PORT = process.env.PORT || 10000;
@@ -12,6 +13,7 @@ app.use((req,res,next)=>{console.log(req.method+' '+req.url);next();});
 // the list of methods goes here
 
 app.use('/users',uMethods);
+app.use('/events',eMethods);
 
 mongoose.connect(DB_URL).then(()=>{
 

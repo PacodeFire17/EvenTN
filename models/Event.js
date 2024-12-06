@@ -27,6 +27,7 @@ const eventSchema = new mongoose.Schema({
     maxSeats: Number,
     bookedSeats: Number,
     description: String,
+    image: String,
     needBooking: Boolean,
     tags: [String],
     organizerId: { type: mongoose.Schema.Types.ObjectId, ref: 'user'},

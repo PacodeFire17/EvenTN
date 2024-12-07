@@ -9,7 +9,7 @@ router.get('', async (req, res) => {
 
     // Controllo se sono stati forniti tag
     if (!Array.isArray(tags) || tags.length === 0) {
-      return res.status(400).send('A list of tags is required.');
+      return res.status(400).json({message: 'Si deve inserire almeno un tag'});
     }
 
     // Determino il filtro in base al ruolo dell'utente
@@ -22,7 +22,7 @@ router.get('', async (req, res) => {
 
     // Se non sono stati trovati eventi, restituisco 404
     if (events.length === 0) {
-      return res.status(404).send('resource not found');
+      return res.status(404).json({message: 'Nessun evento corrisponde ai cirteri di ricerca'});
     }
 
     let ret = [];
@@ -44,10 +44,10 @@ router.get('', async (req, res) => {
     }));
 
     // Rispondo con gli eventi trovati
-    res.status(200).json(ret);
+    return res.status(200).json(ret);
   } catch (err) {
     console.error('Error while searching the event:', err.message);
-    res.status(500).send('Server error');
+    return res.status(500).json({message: 'Qualcosa è andato storto'});
   }
 });
 

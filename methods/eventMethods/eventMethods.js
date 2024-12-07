@@ -1,6 +1,7 @@
 const eventModel = require('../../models/Event');
 const tokenCheker = require('../tokenChecker');
 const express = require('express');
+const jwt = require('jsonwebtoken');
 const singleEvent  = require('./singleEventMethods');
 const search = require('./searchMethods');
 const router = express.Router();
@@ -15,12 +16,22 @@ router.get('', async (req, res) => {
     // Trova tutti gli eventi
     let events;
 
-    if(req.query.approved !== undefined && !req.query.approved){
-      events = await eventModel.find({ approved: false }).exec();
-    } else events = await eventModel.find({ approved: true }).exec();
+    if(req.query.approved !== undefined && !req.query.approved){ //solo operatori comunali dovrebbero vedere questo risultato
+
+      if(!req.body.AuthNToken) return res.status(401).json({message: 'Un token deve essere previsto'});
+
+      jwt.verify(req.body.AuthNToken,process.env.SUPER_SECRET_KEY,function (err,decoded){
+        if (err) return res.status(401).json({message: 'The token is not valid. Authenticate again'});
+        else if (decoded.role!=='townHall') return res.status(401).json({message: 'L\'utente non dispone dei privilegi per svolgere questa azione'});
+      });
+
+      events = await eventModel.find({ approved: false }).populate('organizerId').exec();
+    } else {
+      events = await eventModel.find({ approved: true }).populate('organizerId').exec();
+    }
 
     if (!events.length) {
-      return res.status(404).send('resource not found1');
+      return res.status(404).json({message: 'Non ci sono eventi'});
     } else {
       // Modifico in un formato leggibile per la risposta
       const eventList = events.map(event => ({
@@ -33,7 +44,7 @@ router.get('', async (req, res) => {
         image: event.image,
         needBooking: event.needBooking,
         tags: event.tags,
-        organizerId: event.organizerId
+        organizer: event.organizerId.username
       }));
     
       // Risposta con gli eventi trovati
@@ -41,7 +52,7 @@ router.get('', async (req, res) => {
     }
   } catch (err) {
     //catcho gli errori
-    res.status(404).send('resource not found2');
+    res.status(500).json({message: 'Qualcosa è andato storto'});
   }
 });
 
@@ -56,8 +67,8 @@ router.post('', async (req, res) => {
 
     // Controllo che l'utente sia un organizzatore
     if (req.loggedUser.role !== 'organization') {
-      return res.status(403).send({ message: 'Only organizers can create events.' });
-    } else {
+      return res.status(403).json({ message: 'Only organizers can create events.' });
+    }
 
       const event = req.body.Event;
 
@@ -98,11 +109,10 @@ router.post('', async (req, res) => {
 
         // Risposta con l'evento creato
         return res.status(201).json(savedEvent);
-      } else return res.status(500).send('resource not created');
-    }
+      } else return res.status(400).json({message: 'L\'evento che si vuole creare esiste già' })
   } catch (err) {
     console.error('Error during event creation', err.message);
-    return res.status(501).send('resource not created');
+    return res.status(500).json({message: 'Qualcosa è andato storto'});
   }
 });
 

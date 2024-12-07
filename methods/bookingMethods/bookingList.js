@@ -10,12 +10,12 @@ const bookingList = async (req, res) => {
     const event = await Event.findById(id);
 
     if (!event) {
-      return res.status(404).send('resource not found');
+      return res.status(404).json({message: 'L\'evento selezionato non esiste'});
     }
 
     // Verifica che l'utente che richiede i dati sia l'organizzatore dell'evento
     if (event.organizerId.toString() !== req.loggedUser.id.toString()) {
-      return res.status(401).send('user not authenticated');
+      return res.status(401).json({message: 'L\'utente non possiede i privilegi adatti a eseguire questa azione'});
     }
 
     // Trova tutte le prenotazioni associate a questo evento
@@ -29,7 +29,7 @@ const bookingList = async (req, res) => {
 
   } catch (error) {
     console.error(error);
-    return res.status(500).send('could not see the resource');
+    return res.status(500).json({message: 'Qualcosa è andato storto'});
   }
 };
 

@@ -1,0 +1,917 @@
+openapi: 3.0.0
+info:
+  version: '1.0'
+  title: "EvenTN OpenAPI 3.0"
+  description: API for managing events.
+
+paths:
+  
+  /api/v1/users:
+    description: all the action connected to the user
+
+    get:
+      summary: returns the info of a user that is specified via query
+      description: The id of the user is inserted via query. For doing so, the user must be authenticated
+      parameters:
+        - in: query
+          name: id
+          schema:
+            type: string
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  username:
+                    type: string
+                  role:
+                    type: string
+                    enum: [citizen,organization,townhall]
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+  /api/v1/users/salt:
+    
+    get:
+      description: is used to get the salt of the user for the authentication procedure
+      parameters:
+        - in: query
+          name: username
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: the user has been found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  salt:
+                    type: string
+        
+        "400":
+          description: username not inserted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+
+  /api/v1/users/authenticate:
+    description: used to authenticate the user
+
+    post:
+      summary: authenticates the user through username and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        "200":
+          description: user authenticated correctly
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                  AuthNToken:
+                    type: string
+                  role:
+                    type: string
+        "400":
+          description: the user does not exist
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: the authencation procedure has gone wrong
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+  /api/v1/users/{id}/bookings:
+    description: the booking of the {id} citizen
+
+    get:
+      summary: returns the booking that the {id} citizen made
+      description: The user must be authenticated to do so and must be a citizen account
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    howMany: 
+                      type: integer
+                    eventId:
+                      type: string
+                    eventName:
+                      type: string
+                    startDate:
+                      $ref: "#/components/schemas/Date"
+                    endDate:
+                      $ref: "#/components/schemas/Date"
+                    location:
+                      $ref: "#/components/schemas/Location"
+                    description:
+                      type: string
+                    image:
+                      type: string #base64 encoding
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    organizer:
+                      type: string   
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  
+  /api/v1/users/organizations:
+    description: a list of all the organizations
+
+    get:
+      summary: returns a list of all the organizations
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    username:
+                      type: string
+                    role:
+                      type: string
+                      enum: [citizen,organization,townhall]
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+  /api/v1/users/{id}/events:
+    description: the events that the {id} organization made
+
+    get:
+      summary: returns the list of events that the {id} organization made
+      description: Must be authenticated to do so and the account must be an organization
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Event"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+  /api/v1/events:
+    description: a list of all the events
+
+    get:
+      summary: returns a list of all the events
+      description: In the query it can be specified if the events have to be approved or not. If not specified, the default is true. If the value is set to false then only town hall type accounts can see the result
+      parameters:
+        - in: query
+          name: approved
+          schema:
+            type: boolean
+          required: false
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    startDate:
+                      $ref: "#/components/schemas/Date"
+                    endDate:
+                      $ref: "#/components/schemas/Date"
+                    location:
+                      $ref: "#/components/schemas/Location"
+                    description:
+                      type: string
+                    image:
+                      type: string #base64 encoding
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    organizer:
+                      type: string
+        "401":
+          description: user lack authorizations
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+    post:
+      summary: adds a new event to the list
+      description: Must be an authenticated organizer to do so
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+                Event:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    startDate:
+                      $ref: "#/components/schemas/Date"
+                    endDate:
+                      $ref: "#/components/schemas/Date"
+                    location:
+                      $ref: "#/components/schemas/Location"
+                    description:
+                      type: string
+                    image:
+                      type: string #base64 encoding
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    maxSeats:
+                      type: integer
+                    resources:
+                      type: string
+      responses:
+        "201":
+          description: resource added successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "403":
+          description: wrong user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: resource not created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+  /api/v1/event/search/type:
+    description: used to search with words
+
+    get:
+      summary: search events with {word} in the name
+      description: The word is inserted via query
+      parameters:
+        - in: query
+          name: name
+          schema:
+            type: string
+          required: true
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    startDate:
+                      $ref: "#/components/schemas/Date"
+                    endDate:
+                      $ref: "#/components/schemas/Date"
+                    location:
+                      $ref: "#/components/schemas/Location"
+                    maxSeats:
+                      type: integer
+                    bookedSeats:
+                      type: integer
+                    description:
+                      type: string
+                    image:
+                      type: string #base64 encoding
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    organizer:
+                      type: string
+                    organizerId:
+                      type: string
+                    self:
+                      type: string
+        "400":
+          description: bad request
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: internal server error
+          content:
+            application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorMessage"
+
+  /api/v1/events/search/tags:
+    description: used to search through tags
+
+    get:
+      summary: search events with tags
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items: # all the tags inserted
+                type: string 
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: string
+                    name:
+                      type: string
+                    startDate:
+                      $ref: "#/components/schemas/Date"
+                    endDate:
+                      $ref: "#/components/schemas/Date"
+                    location:
+                      $ref: "#/components/schemas/Location"
+                    maxSeats:
+                      type: integer
+                    bookedSeats:
+                      type: integer
+                    description:
+                      type: string
+                    image:
+                      type: string #base64 encoding
+                    needBooking:
+                      type: boolean
+                    tags:
+                      type: array
+                      items:
+                        type: string
+                    organizer:
+                      type: string
+                    organizerId:
+                      type: string
+                    self:
+                      type: string
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+  
+  /api/v1/events/{id}:
+    description: all the information about the {id} event
+
+    get:
+      summary: gets all the information about the {id} event. Must be authenticated to do so
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: internal server error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+    put:
+      summary: approves the event
+      description: Must be authenticated to do so
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: resource created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: could not approve the resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+    delete:
+      summary: deletes the event {id}
+      description: Only accessible to the organizer and townHall. Must be authenticated to do so. Returns the deleted event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: resource deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Event"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: could not delete the resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+          
+  
+  /api/v1/events/{id}/bookings:
+    description: show all the booking made to the event
+
+    get:
+      summary: returns the list of bookings made
+      description: Should be accessible only to the organizer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200":
+          description: the resource has been found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: could not see the resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+    post:
+      summary: makes a booking
+      description: Only usable if the account is the citizen type
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+                howMany:
+                  type: integer
+      responses:
+        "201":
+          description: resource created successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"  
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: resource not created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+    delete:
+      summary: deletes the booking
+      description: The only one that can delete the booking is the one who made it in the first place. The id of the booking is inserted via query
+      parameters:
+        - in: query
+          name: id
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                AuthNToken:
+                  type: string
+      responses:
+        "200": 
+          description: resource deleted successfully
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "400":
+          description: bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "401":
+          description: user not authenticated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "404":
+          description: resource not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+        "500":
+          description: could not delete the resource
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorMessage"
+
+            
+          
+
+components:
+  schemas:
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+        role:
+          type: string
+          enum: [citizen,organization,townhall]
+        self:
+          type: string # URL of the same User
+
+    Event:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        startDate:
+          $ref: "#/components/schemas/Date"
+        endDate:
+          $ref: "#/components/schemas/Date"
+        location:
+          $ref: "#/components/schemas/Location"
+        maxSeats: 
+          type: integer
+        bookedSeats:
+          type: integer
+        description:
+          type: string
+        image:
+          type: string #base64 encoding
+        needBooking:
+          type: boolean
+        tags:
+          type: array
+          items:
+            type: string
+        organizerId:
+          type: string # id of the organizer
+        approved: # the event can be approved by the town hall
+          type: boolean
+        bookings: # the Id of the bookings made for the event
+          type: array
+          items:
+            type: string
+        resources:
+          type: string
+        self:
+          type: string # URL of the same event
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: string
+        citizenId:
+          type: string # id of the booker
+        howMany: # the number of seats booked
+          type: integer
+        eventId: # the event for which the booking is made
+          type: string
+        self:
+          type: string # URL of the same thing
+    
+    ErrorMessage:
+      type: object
+      properties:
+        message:
+          type: string
+
+    Date:
+      type: object
+      properties:
+        day: 
+          type: integer
+        month: 
+          type: integer
+        year:
+          type: integer
+        hour:
+          type: integer
+        minutes:
+          type: integer
+
+    Location:
+      type: object
+      properties:
+        via:
+          type: string
+        number:
+          type: integer
+        city:
+          type: string
+        CAP:
+          type: integer
+        region:
+          type: string
+        country:
+          type: string

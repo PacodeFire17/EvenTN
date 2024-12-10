@@ -17,8 +17,8 @@ app.use((req,res,next)=>{console.log(req.method+' '+req.url);next();});
 
 // the list of methods goes here
 
-app.use('/users',uMethods);
-app.use('/events',eMethods);
+app.use('/api/v1/users',uMethods);
+app.use('/api/v1/events',eMethods);
 
 mongoose.connect(DB_URL).then(()=>{
 

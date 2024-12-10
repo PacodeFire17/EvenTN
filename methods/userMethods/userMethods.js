@@ -1,13 +1,10 @@
 const express = require('express');
-const cors = require('cors');
 const tokenChecker = require('../tokenChecker');
 const auth = require('./authentication');
 const idMethods = require ('./idUri');
 const getO = require('./getOrgs');
 const userModel = require('../../models/user');
 const router = express.Router({mergeParams: true});
-
-app.use(cors());
 
 //tutti i metodi riguardanti /users
 

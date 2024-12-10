@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "node index.js",
     "test": "echo this works",
     "dep": "node index.js",
     "dev": "node -r dotenv/config index.js",

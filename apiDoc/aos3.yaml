@@ -112,6 +112,8 @@ paths:
                     type: string
                   AuthNToken:
                     type: string
+                  role:
+                    type: string
         "400":
           description: the user does not exist
           content:

@@ -15,7 +15,7 @@ router.post('',async (req,res)=>{
         req.body.password=req.body.password;
         if (req.body.password === sameName.password){
             let token = jwt.sign({username: sameName.username, role: sameName.role, id:sameName._id, self: sameName.self},process.env.SUPER_SECRET_KEY,{expiresIn: 86400});
-            return res.status(200).json({message: 'L\'autenticazione è andata a buon fine. Il token dura un giorno',AuthNToken: token});
+            return res.status(200).json({message: 'L\'autenticazione è andata a buon fine. Il token dura un giorno',AuthNToken: token,role: sameName.role});
         } else {
             return res.status(401).json({message: 'Username o password errati. Riprovare'});
         }

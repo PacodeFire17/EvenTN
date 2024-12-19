@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="it">
+<html data-theme="cupcake"></html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvenTN</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <header class="flex justify-between items-center p-4 bg-white shadow-md">
+        <h1 class="text-3xl font-bold">EvenTN</h1>
+        <div class="flex items-center space-x-4">
+            <button class="btn btn-outline">🌐 Cambia Lingua</button>
+            <button class="btn btn-outline">🔒Login</button>
+        </div>
+    </header>
+    <main class="max-w-6xl mx-auto p-6" id="app">
+        <div class="flex justify-center mb-6">
+            <input type="text" placeholder="Cerca evento" class="input input-bordered w-full max-w-lg bg-white">
+        </div>
+        <div class="flex justify-center mb-6 space-x-2">
+            <button class="btn btn-sm btn-outline btn-primary">Musica</button>
+            <button class="btn btn-sm btn-outline btn-secondary">Arte</button>
+            <button class="btn btn-sm btn-outline btn-accent">Cinema</button>
+            <button class="btn btn-sm btn-outline btn-info">Teatro</button>
+            <button class="btn btn-sm btn-outline btn-success">Sport</button>
+            <button class="btn btn-sm btn-outline btn-warning">Altro</button>
+        </div>
+        <h2 class="text-2xl font-bold mb-6">I prossimi eventi a Trento</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div v-for="event in events" :key="event.id" class="card bg-white shadow-xl">
+                <figure><img src="https://via.placeholder.com/150" :alt="event.title" /></figure>
+                <div class="card-body">
+                    <h2 class="card-title">{{ event.title }}</h2>
+                    <p>{{ event.location }}</p>
+                    <p>{{ event.date }}, {{ event.time }}</p>
+                    <div class="card-actions justify-end">
+                        <button @click="viewEvent(event)" class="btn btn-primary">Scopri</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flex justify-end mt-6">
+            <a href="tutti-gli-eventi.html" class="text-blue-500 hover:underline">Tutti gli eventi</a>
+        </div>
+        <div class="fixed bottom-0 left-0 p-4">
+            <div class="tripartite-button">
+                <button onclick="window.location.href='vistaElenco.html'" class="btn btn-active btn-secondary">Elenco</button>
+                <button onclick="window.location.href='vistaMappa.html'" class="btn btn-active btn-secondary">Mappa</button>
+                <button onclick="window.location.href='vistaCalendario.html'" class="btn btn-active btn-secondary">Calendario</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                events: [
+                {id: '12edfer12',
+                title:'vigilia di natale',
+                date: '2025-02-15',
+                time: '18:00',
+                location: 'Schio',
+                maxSeats: 10,
+                bookedSeats: 9,
+                description: 'asdfsgdhj',
+                needBooking: true,
+                tags: 'Sport',
+                organizerId: 1234,
+                },
+
+                {id: '2345erfr12',
+                title:'sci in compagnia',
+                date: '2021-02-17',
+                time: '9:30',
+                location: 'Asiago',
+                maxSeats: 10,
+                bookedSeats: 9,
+                description: 'piste da sci in città',
+                needBooking: false,
+                tags: 'Cultura',
+                organizerId: 111134},
+
+                {id: '12edfer1dfss',
+                title:'valdagno bella da dio',
+                date: '2024-12-15',
+                time: '08:00',
+                location: 'Valdagno',
+                maxSeats: 10,
+                bookedSeats: 2,
+                description: 'citta decorata',
+                needBooking: true,
+                tags: 'AAAAA',
+                organizerId: 1464}
+                ]
+            },
+            created() {
+                this.fetchEvents();
+            },
+            methods: {
+                fetchEvents() {
+                    axios.get('URL_DEL_TUO_BACKEND')
+                        .then(response => {
+                            this.events = response.data;
+                        })
+                        .catch(error => {
+                            console.error('Errore nel recupero dei dati:', error);
+                        });
+                },
+                viewEvent(event) {
+                    const eventDetails = encodeURIComponent(JSON.stringify(event));
+                    window.location.href = `infoEvento.html?event=${eventDetails}`;
+                }
+            }
+        });
+    </script>
+</body>
+</html>
+
+<!--<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="card bg-white shadow-xl">
+        <figure><img src="https://via.placeholder.com/150" alt="Evento 1" /></figure>
+        <div class="card-body">
+            <h2 class="card-title">Concerto di Natale</h2>
+            <p>Teatro della Musica, Roma</p>
+            <p>25 Dicembre 2024, 20:00</p>
+            <div class="card-actions justify-end">
+                <button onclick="window.location.href='infoEvento.html'" class="btn btn-primary">Scopri</button>
+            </div>
+        </div>
+    </div>
+-->         

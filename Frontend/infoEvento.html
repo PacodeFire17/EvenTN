@@ -1,0 +1,130 @@
+<!---<!DOCTYPE html>
+<html lang="it">
+<html data-theme="cupcake"></html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finestra Evento</title>
+    <script src="https://cdn.jsdelivr.net/npm/daisyui@2.47.0/dist/full.js"></script>
+</head>
+    <body class="bg-gray-100">
+        <div class="max-w-4xl mx-auto p-6">
+            <div class="card lg:card-side bg-base-100 shadow-xl">
+                <figure><img src="https://via.placeholder.com/600x400" alt="Evento" /></figure>
+                <div class="card-body">
+                    <h2 class="card-title text-2xl font-semibold">Assalto a TT</h2>
+                    <p class="text-lg text-gray-700">Una guerra straordinaria per combattere questi scansafatiche. Join us!</p>
+                    <div class="divider"></div>
+                    <p><strong>Data:</strong> 25 Dicembre 2024</p>
+                    <p><strong>Orario:</strong> 20:00</p>
+                    <p><strong>Luogo:</strong> Sede di TT, Trento</p>
+                    <div class="card-actions justify-end">
+                        <button class="btn btn-primary">Prenota posto</button>
+                        <button class="btn btn-accent btn-outline">Chiudi</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+</body>
+</html>-->
+<!DOCTYPE html>
+<html lang="it">
+<html data-theme="cupcake"></html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Info Evento</title>
+    <script src="https://cdn.jsdelivr.net/npm/daisyui@2.47.0/dist/full.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body class="bg-gray-100">
+    <div id="app" class="max-w-4xl mx-auto p-6">
+        <div class="card lg:card-side bg-base-100 shadow-xl">
+            <figure><img :src="event.image" alt="Evento" /></figure>
+            <div class="card-body">
+                <h2 class="card-title text-2xl font-semibold">{{ event.title }}</h2>
+                <p class="text-lg text-gray-700">{{ event.description }}</p>
+                <div class="divider"></div>
+                <p><strong>Data:</strong> {{ event.date }}</p>
+                <p><strong>Orario:</strong> {{ event.time }}</p>
+                <p><strong>Luogo:</strong> {{ event.location }}</p>
+                <div class="card-actions justify-end">
+                    <button v-if="userType === 'cittadino'" class="btn btn-primary" @click="showBookingBanner = true">Prenota posto</button>
+                    <div v-else>
+                        <button onclick="window.location.href='creaEvento.html'" class="btn btn-secondary">Modifica evento</button>
+                        <button class="btn btn-error">Elimina evento</button>
+                    </div>
+                    <button onclick="window.location.href='vistaElenco.html'" class="btn btn-accent btn-outline">Chiudi</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner per la prenotazione -->
+        <div v-if="showBookingBanner" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Quanti posti vuoi prenotare?</h3>
+                <input type="number" v-model="bookingSeats" class="input input-bordered w-full mb-4" min="1">
+                <div class="flex justify-end space-x-2">
+                    <button class="btn btn-secondary" @click="showBookingBanner = false">Annulla</button>
+                    <button class="btn btn-primary" @click="confirmBooking">Conferma</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Banner di conferma -->
+        <div v-if="showConfirmationBanner" class="fixed inset-0 bg-gray-800 bg-opacity-50 flex items-center justify-center">
+            <div class="bg-white p-6 rounded shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">{{ confirmationMessage }}</h3>
+                <div class="flex justify-end">
+                    <button class="btn btn-primary" onclick="window.location.href='vistaElenco.html'" @click="showConfirmationBanner = false">OK</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                userType: 'cittadino',
+                event: {
+                    title: '',
+                    description: '',
+                    date: '',
+                    time: '',
+                    location: '',
+                    image: ''
+                },
+                showBookingBanner: false,
+                bookingSeats: 1,
+                showConfirmationBanner: false,
+                confirmationMessage: ''
+            },
+            created() {
+                this.getEventFromUrl();
+            },
+            methods: {
+                getEventFromUrl() {
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const eventDetails = urlParams.get('event');
+                    if (eventDetails) {
+                        this.event = JSON.parse(decodeURIComponent(eventDetails));
+                    }
+                },
+                confirmBooking() {
+                    // Simula la conferma della prenotazione
+                    this.showBookingBanner = false;
+                    this.confirmationMessage = `Hai prenotato ${this.bookingSeats} posti.`;
+                    this.showConfirmationBanner = true;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

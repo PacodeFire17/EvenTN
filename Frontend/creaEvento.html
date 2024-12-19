@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crea Evento</title>
+    <script src="https://cdn.jsdelivr.net/npm/daisyui@2.47.0/dist/full.js"></script>
+    <style>
+        .tags-input {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        .tag {
+            background-color: #e2e8f0;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+        }
+        .tag span {
+            margin-right: 5px;
+        }
+        .tag button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body class="bg-white">
+    <div class="max-w-4xl mx-auto p-6">
+        <div class="card bg-base-100 shadow-xl">
+            <div class="card-body">
+                <h2 class="card-title text-2xl font-semibold">Crea un Nuovo Evento</h2>
+                <form>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Nome Evento</span>
+                        </label>
+                        <input type="text" placeholder="Nome Evento" class="input input-bordered" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Descrizione</span>
+                        </label>
+                        <textarea placeholder="Descrizione" class="textarea textarea-bordered" required></textarea>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Luogo</span>
+                        </label>
+                        <input type="text" placeholder="Luogo" class="input input-bordered" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="cursor-pointer label">
+                            <span class="label-text">Necessaria Prenotazione</span>
+                            <input type="checkbox" class="toggle toggle-primary">
+                        </label>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Data</span>
+                        </label>
+                        <input type="date" class="input input-bordered" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Orario di Inizio</span>
+                        </label>
+                        <input type="time" class="input input-bordered" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Numero di Posti</span>
+                        </label>
+                        <input type="number" placeholder="Numero di Posti Massimi" class="input input-bordered" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Immagine</span>
+                        </label>
+                        <input type="file" class="file-input file-input-bordered" required>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Richiesta Risorse al Comune (facoltativo)</span>
+                        </label>
+                        <textarea placeholder="Richiesta Risorse" class="textarea textarea-bordered"></textarea>
+                    </div>
+                    <div class="form-control">
+                        <label class="label">
+                            <span class="label-text">Tags</span>
+                        </label>
+                        <div>
+                            <button class="btn btn-outline">All'aperto</button>
+                            <button class="btn btn-outline btn-primary">Al chiuso</button>
+                            <button class="btn btn-outline btn-secondary">Prenotazione Obbligatoria</button>
+                            <button class="btn btn-outline btn-accent">Sport</button>
+                        </div>
+                    </div>
+                    <div class="form-control mt-6">
+                        <button class="btn btn-primary" type="submit">Crea Evento</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const tagInput = document.getElementById('tag-input');
+            const tagsInput = document.getElementById('tags-input');
+
+            tagInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const tagText = tagInput.value.trim();
+                    if (tagText) {
+                        const tag = document.createElement('div');
+                        tag.className = 'tag';
+                        tag.innerHTML = `<span>${tagText}</span><button type="button">&times;</button>`;
+                        tagsInput.insertBefore(tag, tagInput);
+                        tagInput.value = '';
+
+                        tag.querySelector('button').addEventListener('click', () => {
+                            tagsInput.removeChild(tag);
+                        });
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

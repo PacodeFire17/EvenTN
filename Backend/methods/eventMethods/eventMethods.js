@@ -16,7 +16,7 @@ router.get('', async (req, res) => {
     // Trova tutti gli eventi
     let events;
 
-    if(req.query.approved !== undefined && !req.query.approved){ //solo operatori comunali dovrebbero vedere questo risultato
+    if(req.query.approved !== undefined && req.query.approved === 'false'){ //solo operatori comunali dovrebbero vedere questo risultato
 
       if(!req.query.AuthNToken) return res.status(401).json({message: 'Un token deve essere previsto'});
 

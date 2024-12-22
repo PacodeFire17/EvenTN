@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 
 // middelware per verificare se il token fornito è valido
 const tokenChecker = function(req, res, next) {
-    var token = req.query.token || req.body.AuthNToken;
+    var token = req.query.AuthNToken || req.body.AuthNToken;
 
     if (!token) return res.status(401).json({message: 'A token must be provided'});
     else{

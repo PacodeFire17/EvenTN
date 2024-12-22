@@ -18,9 +18,9 @@ router.get('', async (req, res) => {
 
     if(req.query.approved !== undefined && !req.query.approved){ //solo operatori comunali dovrebbero vedere questo risultato
 
-      if(!req.body.AuthNToken) return res.status(401).json({message: 'Un token deve essere previsto'});
+      if(!req.query.AuthNToken) return res.status(401).json({message: 'Un token deve essere previsto'});
 
-      jwt.verify(req.body.AuthNToken,process.env.SUPER_SECRET_KEY,function (err,decoded){
+      jwt.verify(req.query.AuthNToken,process.env.SUPER_SECRET_KEY,function (err,decoded){
         if (err) return res.status(401).json({message: 'The token is not valid. Authenticate again'});
         else if (decoded.role!=='townHall') return res.status(401).json({message: 'L\'utente non dispone dei privilegi per svolgere questa azione'});
       });

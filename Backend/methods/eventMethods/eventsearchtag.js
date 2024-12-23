@@ -5,7 +5,7 @@ const router = express.Router({mergeParams: true});
 // Rotta per cercare eventi tramite tag /events/search/tags
 router.post('', async (req, res) => {
   try {
-    const tags = req.query.tags ? req.query.tags.split(',') : []; // Recupero i tag dalla query string e li divide in un array
+    const tags = req.body ? req.body : []; // Recupero i tag dalla query string e li divide in un array
 
     // Controllo se sono stati forniti tag
     if (!Array.isArray(tags) || tags.length === 0) {

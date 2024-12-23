@@ -16,13 +16,13 @@ router.get('', async (req, res) => {
     // Trova tutti gli eventi
     let events;
 
-    if(req.query.approved !== undefined && !req.query.approved){ //solo operatori comunali dovrebbero vedere questo risultato
+    if(req.query.approved !== undefined && req.query.approved === 'false'){ //solo operatori comunali dovrebbero vedere questo risultato
 
       if(!req.query.AuthNToken) return res.status(401).json({message: 'Un token deve essere previsto'});
 
       jwt.verify(req.query.AuthNToken,process.env.SUPER_SECRET_KEY,function (err,decoded){
         if (err) return res.status(401).json({message: 'The token is not valid. Authenticate again'});
-        else if (decoded.role!=='townHall') return res.status(401).json({message: 'L\'utente non dispone dei privilegi per svolgere questa azione'});
+        else if (decoded.role!=='townhall') return res.status(401).json({message: 'L\'utente non dispone dei privilegi per svolgere questa azione'});
       });
 
       events = await eventModel.find({ approved: false }).populate('organizerId').exec();

@@ -130,6 +130,11 @@ paths:
       summary: returns the booking that the {id} citizen made
       description: The user must be authenticated to do so and must be a citizen account
       parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
         - in: query
           name: AuthNToken
           schema:
@@ -222,6 +227,11 @@ paths:
       summary: returns the list of events that the {id} organization made
       description: Must be authenticated to do so and the account must be an organization
       parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
         - in: query
           name: AuthNToken
           schema:
@@ -535,6 +545,11 @@ paths:
     get:
       summary: gets all the information about the {id} event. Must be authenticated to do so
       parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
         - in: query
           name: AuthNToken
           schema: 
@@ -569,6 +584,12 @@ paths:
     put:
       summary: approves the event
       description: Must be authenticated to do so
+      parameters: 
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
       requestBody:
         required: true
         content:
@@ -613,15 +634,17 @@ paths:
     delete:
       summary: deletes the event {id}
       description: Only accessible to the organizer and townHall. Must be authenticated to do so. Returns the deleted event
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                AuthNToken:
-                  type: string
+      parameters: 
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
+        - in: query
+          name: AuthNToken
+          schema:
+            type: string
+          required: true
       responses:
         "200":
           description: resource deleted successfully
@@ -656,6 +679,11 @@ paths:
       summary: returns the list of bookings made
       description: Should be accessible only to the organizer
       parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
         - in: query
           name: AuthNToken
           schema:
@@ -692,6 +720,12 @@ paths:
     post:
       summary: makes a booking
       description: Only usable if the account is the citizen type
+      parameters: 
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
       requestBody:
         required: true
         content:
@@ -739,20 +773,21 @@ paths:
       summary: deletes the booking
       description: The only one that can delete the booking is the one who made it in the first place. The id of the booking is inserted via query
       parameters:
+        - in: path
+          name: id
+          schema:
+            type: string
+          required: true
         - in: query
           name: id
           required: true
           schema:
             type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                AuthNToken:
-                  type: string
+        - in: query
+          name: AuthNToken
+          schema:
+            type: string
+          required: true
       responses:
         "200": 
           description: resource deleted successfully
@@ -883,15 +918,9 @@ components:
     Location:
       type: object
       properties:
-        via:
-          type: string
-        number:
-          type: integer
-        city:
-          type: string
-        CAP:
-          type: integer
-        region:
-          type: string
-        country:
+        lat:
+          type: number
+        lng:
+          type: number
+        address:
           type: string

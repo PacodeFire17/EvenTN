@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="it">
+<html data-theme="cupcake">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvenTN</title>
+    <!-- Includi Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Includi daisyUI -->
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <!-- Includi Vue.js -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <!-- Includi Axios -->
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <!-- Includi il CSS di Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Includi il JavaScript di Leaflet.js -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        .button-fixed {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            z-index: 9999;
+        }
+        #map {
+            height: 500px; 
+            width: 80%; 
+            border-radius: 15px; 
+            margin: 0 auto; 
+            position: relative;
+            z-index: 1;
+        }
+        .center-text {
+            text-align: center;
+        }
+        .spaced-content {
+            margin-top: 20px; 
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <header class="flex justify-between items-center p-4 bg-white shadow-md">
+        <h1 class="text-3xl font-bold">EvenTN</h1>
+        <div class="flex items-center space-x-4">
+            <button class="btn btn-outline">🌐 Cambia Lingua</button>
+            <button class="btn btn-outline">🔒Login</button>
+        </div>
+    </header>
+    <main class="max-w-6xl mx-auto p-6" id="app">
+        <h2 class="text-2xl font-bold mb-6">I prossimi eventi a Trento</h2>   
+    </main>
+    <div id="map" class="mb-6"></div>
+    <div class="button-fixed">
+        <div class="tripartite-button">
+            <button onclick="window.location.href='vistaElenco.html'" class="btn btn-active btn-secondary">Elenco</button>
+            <button onclick="window.location.href='vistaMappa.html'" class="btn btn-active btn-secondary">Mappa</button>
+            <button onclick="window.location.href='vistaCalendario.html'" class="btn btn-active btn-secondary">Calendario</button>
+        </div>
+    </div>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                events: [
+                    { id: '12edfer12', title: 'Vigilia di Natale', date: '2025-02-15', time: '18:00', location: 'Piazza Duomo', lat: 46.0667, lng: 11.1167, maxSeats: 10, bookedSeats: 9, description: 'asdfsgdhj', needBooking: true, tags: 'Sport', organizerId: 1234 },
+                    { id: '2345erfr12', title: 'Sci in compagnia', date: '2021-02-17', time: '9:30', location: 'Muse', lat: 46.0697, lng: 11.1217, maxSeats: 10, bookedSeats: 9, description: 'piste da sci in città', needBooking: false, tags: 'Cultura', organizerId: 111134 },
+                    { id: '12edfer1dfss', title: 'Città in festa', date: '2024-12-15', time: '08:00', location: 'Piazza Dante', lat: 46.0687, lng: 11.1127, maxSeats: 10, bookedSeats: 2, description: 'citta decorata', needBooking: true, tags: 'AAAAA', organizerId: 1464 }
+                ]
+            },
+            created() {
+                this.fetchEvents();
+                this.initMap();
+            },
+            methods: {
+                fetchEvents() {
+                    axios.get('URL_DEL_TUO_BACKEND')
+                        .then(response => {
+                            this.events = response.data;
+                            this.addMarkersToMap();
+                        })
+                        .catch(error => {
+                            console.error('Errore nel recupero dei dati:', error);
+                        });
+                },
+                viewEvent(event) {
+                    const eventDetails = encodeURIComponent(JSON.stringify(event));
+                    window.location.href = `infoEvento.html?event=${eventDetails}`;
+                },
+                initMap() {
+                    this.map = L.map('map').setView([46.0667, 11.1167], 13); // Coordinate di Trento con zoom 13
+
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                    }).addTo(this.map);
+
+                    this.addMarkersToMap();
+                },
+                addMarkersToMap() {
+                    if (this.map && this.events.length > 0) {
+                        this.events.forEach(event => {
+                            const marker = L.marker([event.lat, event.lng])
+                                .addTo(this.map)
+                                .bindTooltip(`<b>${event.title}</b><br>${event.location}`, {
+                                    permanent: false,
+                                    direction: 'top',
+                                    offset: L.point(0, -10)
+                                })
+                                .on('click', () => {
+                                    this.viewEvent(event);
+                                });
+                        });
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

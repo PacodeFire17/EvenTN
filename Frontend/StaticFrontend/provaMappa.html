@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="it">
+<html data-theme="cupcake"></html>
+<head>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <title>Seleziona luogo</title>
+    <!-- Includi il CSS di Leaflet.js -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <!-- Includi il JavaScript di Leaflet.js -->
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <style>
+        #map {
+            height: 500px; 
+            width: 80%; 
+            border-radius: 15px; 
+            margin: 0 auto; 
+        }
+        .center-text {
+            text-align: center;
+        }
+        .spaced-content {
+            margin-top: 20px; 
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <h2 class="text-2xl font-bold mb-6 center-text spaced-content">Seleziona il luogo dell'evento</h2>
+    <div id="map" class="mb-6"></div>
+    <p class="center-text">Latitudine: <span id="lat"></span></p>
+    <p class="center-text">Longitudine: <span id="lng"></span></p>
+    <div class="center-text">
+        <button class="btn btn-primary mt-4" onclick="savePosition()">Salva posizione</button>
+    </div>
+    <script>
+        // Crea la mappa centrata su Trento
+        const map = L.map('map').setView([46.0667, 11.1167], 13); // Coordinate di Trento con zoom 13
+
+        // Aggiungi il layer di Tile per la mappa (OpenStreetMap)
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Inizializza il segnaposto
+        let marker;
+
+        // Aggiungi evento di click sulla mappa
+        map.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+            document.getElementById('lat').innerText = lat.toFixed(6);
+            document.getElementById('lng').innerText = lng.toFixed(6);
+
+            // Aggiungi o aggiorna il marker sulla mappa
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+        });
+
+        function savePosition() {
+            const lat = document.getElementById('lat').innerText;
+            const lng = document.getElementById('lng').innerText;
+            console.log(`Posizione salvata: Latitudine ${lat}, Longitudine ${lng}`);
+            alert(`Posizione salvata: Latitudine ${lat}, Longitudine ${lng}`);
+
+            window.history.back();
+        }
+    </script>
+</body>
+</html>

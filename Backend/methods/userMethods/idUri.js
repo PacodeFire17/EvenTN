@@ -1,6 +1,7 @@
 const express = require('express');
 const bookModel = require('../../models/bookings');
 const eventModel = require('../../models/Event');
+const img = require('../eventMethods/placeholderImg');
 const router = express.Router({mergeParams:true});
 
 // tutti i metodi per /users/:id
@@ -21,7 +22,7 @@ router.get('/bookings',async (req,res)=>{
                                             endDate: booking.eventId.endDate,
                                             location: booking.eventId.location,
                                             description: booking.eventId.description,
-                                            image: booking.eventId.image,
+                                            image: img,
                                             tags: booking.eventId.tags,
                                             organizer: booking.eventId.organizerId.username
                                         })

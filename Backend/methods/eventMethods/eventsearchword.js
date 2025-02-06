@@ -1,4 +1,5 @@
 const Event = require('../../models/Event');
+const img = require('./placeholderImg');
 const express = require('express');
 const router = express.Router({mergeParams: true});
 // Metodo per la ricerca dell'evento con le parole
@@ -41,7 +42,7 @@ router.get('', async (req, res) => {
         maxSeats: e.maxSeats,
         bookedSeats: e.bookedSeats,
         description: e.description,
-        image: e.image,
+        image: img,
         needBooking: e.needBooking,
         tags: e.tags,
         organizer: e.organizerId.username,

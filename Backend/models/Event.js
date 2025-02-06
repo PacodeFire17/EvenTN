@@ -11,12 +11,9 @@ const dateSchema = new mongoose.Schema({
 });
       
 const locationSchema = new mongoose.Schema({
-    via: String,
-    number: Number,
-    city: String,
-    CAP: Number,
-    region: String,
-    country: String
+    lat: Number,
+    lng: Number,
+    address: String
 });
       
 const eventSchema = new mongoose.Schema({

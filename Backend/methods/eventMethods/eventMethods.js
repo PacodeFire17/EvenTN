@@ -4,6 +4,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const singleEvent  = require('./singleEventMethods');
 const search = require('./searchMethods');
+const img = require('./placeholderImg');
 const router = express.Router();
 
 //metodi di /events
@@ -41,7 +42,7 @@ router.get('', async (req, res) => {
         endDate: event.endDate,
         location: event.location,
         description: event.description,
-        image: event.image,
+        image: img,
         needBooking: event.needBooking,
         tags: event.tags,
         organizer: event.organizerId.username
@@ -91,7 +92,7 @@ router.post('', async (req, res) => {
           endDate: event.endDate,
           location: event.location,
           description: event.description,
-          image: event.image,
+          image: 'placeholder',
           needBooking: event.needBooking,
           tags: event.tags,
           maxSeats: event.maxSeats || 0,

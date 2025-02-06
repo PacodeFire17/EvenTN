@@ -29,6 +29,21 @@
             cursor: pointer;
             font-size: 16px;
         }
+        .button-custom {
+            border: 2px solid #3b82f6; 
+            background-color: #3b82f6; 
+            color: #ffffff; 
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        .button-custom:hover {
+            background-color: #ffffff; 
+            color: #3b82f6; 
+        }
     </style>
 </head>
 <body class="bg-white">
@@ -53,7 +68,7 @@
                         <label class="label">
                             <span class="label-text">Luogo</span>
                         </label>
-                        <input type="text" placeholder="Luogo" class="input input-bordered" required>
+                        <button class="button-custom" type="button" onclick="location.href='provaMappa.html'" required>Seleziona il luogo</button>
                     </div>
                     <div class="form-control">
                         <label class="cursor-pointer label">
@@ -77,7 +92,7 @@
                         <label class="label">
                             <span class="label-text">Numero di Posti</span>
                         </label>
-                        <input type="number" placeholder="Numero di Posti Massimi" class="input input-bordered" required>
+                        <input type="number" placeholder="Numero massimo di posti" class="input input-bordered" required>
                     </div>
                     <div class="form-control">
                         <label class="label">
@@ -96,10 +111,11 @@
                             <span class="label-text">Tags</span>
                         </label>
                         <div>
-                            <button class="btn btn-outline">All'aperto</button>
-                            <button class="btn btn-outline btn-primary">Al chiuso</button>
-                            <button class="btn btn-outline btn-secondary">Prenotazione Obbligatoria</button>
-                            <button class="btn btn-outline btn-accent">Sport</button>
+                            <button class="btn btn-outline">Musica</button>
+                            <button class="btn btn-outline btn-primary">Arte</button>
+                            <button class="btn btn-outline btn-secondary">Cinema</button>
+                            <button class="btn btn-outline btn-accent">Teatro</button>
+                            <button class="btn btn-outline btn-primary">Sport</button>
                         </div>
                     </div>
                     <div class="form-control mt-6">

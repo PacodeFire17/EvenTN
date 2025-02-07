@@ -9,18 +9,60 @@
     <title>EvenTN</title>
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        html, body {
+            height: 100%;    
+            margin: 0;       
+            padding: 0;      
+        }
+
+        body {
+            background-color: #add8e6;  
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
+        }
+        header {
+            background-color: #87CEEB;  
+            font-family: 'Poppins', sans-serif; 
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif;
+        }
+        .current-view {
+            background-color: #990000;
+            color: #000; 
+            font-weight: bold; 
+        }
+        .custom {
+            color:azure;
+        }
+        .sans-serif-title {
+            font-family: Cambria; 
+        }
+    </style>
 </head>
-<body class="bg-gray-100">
-    <header class="flex justify-between items-center p-4 bg-white shadow-md">
-        <h1 class="text-3xl font-bold">EvenTN</h1>
+<body class="body">
+    <header class="flex justify-between items-center p-4 bg-blue-400 shadow-md">
+        <h1 class="text-3xl font-bold text-white">EvenTN</h1>
         <div class="flex items-center space-x-4">
-            <button class="btn btn-outline">🌐 Cambia Lingua</button>
-            <button class="btn btn-outline">🔒Login</button>
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-outline">🌐 Cambia Lingua</label>
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <li>
+                        <a>
+                            <img src="italian_flag.jpeg" alt="Italiano" class="inline w-6 h-4 mr-2">
+                            Italiano
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-outline" onclick="window.location.href='login.html'">🔒Login</button>
         </div>
     </header>
     <main class="max-w-6xl mx-auto p-6" id="app">
         <div class="flex justify-center mb-6">
-            <input type="text" placeholder="Cerca evento" class="input input-bordered w-full max-w-lg bg-white">
+            <input type="text" placeholder="Cerca evento" class="input input-bordered w-full max-w-lg custom">
         </div>
         <div class="flex justify-center mb-6 space-x-2">
             <button class="btn btn-sm btn-outline btn-primary">Musica</button>
@@ -30,7 +72,7 @@
             <button class="btn btn-sm btn-outline btn-success">Sport</button>
             <button class="btn btn-sm btn-outline btn-warning">Altro</button>
         </div>
-        <h2 class="text-2xl font-bold mb-6">I prossimi eventi a Trento</h2>
+        <h2 class="text-2xl font-bold mb-6 sans-serif-title">I prossimi eventi a Trento</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div v-for="event in events" :key="event.id" class="card bg-white shadow-xl">
                 <figure><img src="https://via.placeholder.com/150" :alt="event.title" /></figure>
@@ -44,15 +86,15 @@
                 </div>
             </div>
         </div>
-        <div class="flex justify-end mt-6">
-            <a href="tutti-gli-eventi.html" class="text-blue-500 hover:underline">Tutti gli eventi</a>
-        </div>
         <div class="fixed bottom-0 left-0 p-4">
             <div class="tripartite-button">
-                <button onclick="window.location.href='vistaElenco.html'" class="btn btn-active btn-secondary">Elenco</button>
+                <button onclick="window.location.href='vistaElenco.html'" class="btn btn-active btn-secondary current-view">Elenco</button>
                 <button onclick="window.location.href='vistaMappa.html'" class="btn btn-active btn-secondary">Mappa</button>
                 <button onclick="window.location.href='vistaCalendario.html'" class="btn btn-active btn-secondary">Calendario</button>
             </div>
+        </div>
+        <div class="fixed bottom-0 right-0 p-4" >
+            <button class="btn btn-outline user-button" onclick="window.location.href='listaEventi.html'">I miei eventi</button>
         </div>
     </main>
 
@@ -62,10 +104,10 @@
             data: {
                 events: [
                 {id: '12edfer12',
-                title:'vigilia di natale',
+                title:'Vigilia di natale',
                 date: '2025-02-15',
                 time: '18:00',
-                location: 'Schio',
+                location: 'Piazza Duomo',
                 maxSeats: 10,
                 bookedSeats: 9,
                 description: 'asdfsgdhj',
@@ -75,10 +117,10 @@
                 },
 
                 {id: '2345erfr12',
-                title:'sci in compagnia',
+                title:'Sci in compagnia',
                 date: '2021-02-17',
                 time: '9:30',
-                location: 'Asiago',
+                location: 'Muse',
                 maxSeats: 10,
                 bookedSeats: 9,
                 description: 'piste da sci in città',
@@ -87,10 +129,10 @@
                 organizerId: 111134},
 
                 {id: '12edfer1dfss',
-                title:'valdagno bella da dio',
+                title:'Città in festa',
                 date: '2024-12-15',
                 time: '08:00',
-                location: 'Valdagno',
+                location: 'Piazza Dante',
                 maxSeats: 10,
                 bookedSeats: 2,
                 description: 'citta decorata',
@@ -104,7 +146,7 @@
             },
             methods: {
                 fetchEvents() {
-                    axios.get('URL_DEL_TUO_BACKEND')
+                    axios.get('URL_DEL_BACKEND')
                         .then(response => {
                             this.events = response.data;
                         })
@@ -122,16 +164,3 @@
 </body>
 </html>
 
-<!--<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-    <div class="card bg-white shadow-xl">
-        <figure><img src="https://via.placeholder.com/150" alt="Evento 1" /></figure>
-        <div class="card-body">
-            <h2 class="card-title">Concerto di Natale</h2>
-            <p>Teatro della Musica, Roma</p>
-            <p>25 Dicembre 2024, 20:00</p>
-            <div class="card-actions justify-end">
-                <button onclick="window.location.href='infoEvento.html'" class="btn btn-primary">Scopri</button>
-            </div>
-        </div>
-    </div>
--->         

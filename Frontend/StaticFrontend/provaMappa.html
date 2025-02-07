@@ -9,11 +9,19 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
     <title>Seleziona luogo</title>
-    <!-- Includi il CSS di Leaflet.js -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- Includi il JavaScript di Leaflet.js -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
+        html,body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #add8e6;
+        }
+        body {
+            background-color: #add8e6;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
+        }
         #map {
             height: 500px; 
             width: 80%; 
@@ -23,12 +31,9 @@
         .center-text {
             text-align: center;
         }
-        .spaced-content {
-            margin-top: 20px; 
-        }
     </style>
 </head>
-<body class="bg-gray-100">
+<body class="body">
     <h2 class="text-2xl font-bold mb-6 center-text spaced-content">Seleziona il luogo dell'evento</h2>
     <div id="map" class="mb-6"></div>
     <p class="center-text">Latitudine: <span id="lat"></span></p>
@@ -37,24 +42,19 @@
         <button class="btn btn-primary mt-4" onclick="savePosition()">Salva posizione</button>
     </div>
     <script>
-        // Crea la mappa centrata su Trento
         const map = L.map('map').setView([46.0667, 11.1167], 13); // Coordinate di Trento con zoom 13
 
-        // Aggiungi il layer di Tile per la mappa (OpenStreetMap)
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(map);
 
-        // Inizializza il segnaposto
         let marker;
 
-        // Aggiungi evento di click sulla mappa
         map.on('click', function(e) {
             const { lat, lng } = e.latlng;
             document.getElementById('lat').innerText = lat.toFixed(6);
             document.getElementById('lng').innerText = lng.toFixed(6);
 
-            // Aggiungi o aggiorna il marker sulla mappa
             if (marker) {
                 marker.setLatLng(e.latlng);
             } else {

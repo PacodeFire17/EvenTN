@@ -1,23 +1,35 @@
 <!DOCTYPE html>
-<html lang="it">
-<html data-theme="cupcake">
+<html lang="it" data-theme="cupcake">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EvenTN</title>
-    <!-- Includi Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Includi daisyUI -->
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
-    <!-- Includi Vue.js -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
-    <!-- Includi Axios -->
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
-    <!-- Includi il CSS di Leaflet.js -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-    <!-- Includi il JavaScript di Leaflet.js -->
     <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
     <style>
+        html, body {
+            height: 100%;    
+            margin: 0;      
+            padding: 0;     
+        }
+
+        body {
+            background-color: #add8e6;  
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;         }
+
+       
+        header {
+            background-color: #87CEEB;  
+            font-family: 'Poppins', sans-serif; 
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif; 
+        }
         .button-fixed {
             position: fixed;
             bottom: 10px;
@@ -38,14 +50,29 @@
         .spaced-content {
             margin-top: 20px; 
         }
+        .current-view {
+            background-color: #990000;
+            color: #000; 
+            font-weight: bold; 
+        }
     </style>
 </head>
-<body class="bg-gray-100">
-    <header class="flex justify-between items-center p-4 bg-white shadow-md">
-        <h1 class="text-3xl font-bold">EvenTN</h1>
+<body class="body">
+    <header class="flex justify-between items-center p-4 bg-blue-400 shadow-md">
+        <h1 class="text-3xl font-bold text-white">EvenTN</h1>
         <div class="flex items-center space-x-4">
-            <button class="btn btn-outline">🌐 Cambia Lingua</button>
-            <button class="btn btn-outline">🔒Login</button>
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-outline">🌐 Cambia Lingua</label>
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <li>
+                        <a>
+                            <img src="italian_flag.jpeg" alt="Italiano" class="inline w-6 h-4 mr-2">
+                            Italiano
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-outline" onclick="window.location.href='login.html'">🔒Login</button>
         </div>
     </header>
     <main class="max-w-6xl mx-auto p-6" id="app">
@@ -55,9 +82,12 @@
     <div class="button-fixed">
         <div class="tripartite-button">
             <button onclick="window.location.href='vistaElenco.html'" class="btn btn-active btn-secondary">Elenco</button>
-            <button onclick="window.location.href='vistaMappa.html'" class="btn btn-active btn-secondary">Mappa</button>
+            <button onclick="window.location.href='vistaMappa.html'" class="btn btn-active btn-secondary current-view">Mappa</button>
             <button onclick="window.location.href='vistaCalendario.html'" class="btn btn-active btn-secondary">Calendario</button>
         </div>
+    </div>
+    <div class="fixed bottom-0 right-0 p-4" >
+        <button class="btn btn-outline user-button" onclick="window.location.href='listaEventi.html'">I miei eventi</button>
     </div>
 
     <script>

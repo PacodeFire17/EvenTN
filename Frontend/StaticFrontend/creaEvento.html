@@ -8,6 +8,16 @@
     <title>Crea Evento</title>
     <script src="https://cdn.jsdelivr.net/npm/daisyui@2.47.0/dist/full.js"></script>
     <style>
+        html,body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #add8e6;
+        }
+        body{
+            background-color: #add8e6;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
+        }
         .tags-input {
             display: flex;
             flex-wrap: wrap;
@@ -46,7 +56,7 @@
         }
     </style>
 </head>
-<body class="bg-white">
+<body class="body">
     <div class="max-w-4xl mx-auto p-6">
         <div class="card bg-base-100 shadow-xl">
             <div class="card-body">
@@ -68,6 +78,7 @@
                         <label class="label">
                             <span class="label-text">Luogo</span>
                         </label>
+                        <input type="text" placeholder="Nome del luogo" class="input input-bordered" required>
                         <button class="button-custom" type="button" onclick="location.href='provaMappa.html'" required>Seleziona il luogo</button>
                     </div>
                     <div class="form-control">
@@ -98,7 +109,7 @@
                         <label class="label">
                             <span class="label-text">Immagine</span>
                         </label>
-                        <input type="file" class="file-input file-input-bordered" required>
+                        <input type="file" class="file-input file-input-bordered">
                     </div>
                     <div class="form-control">
                         <label class="label">
@@ -119,7 +130,7 @@
                         </div>
                     </div>
                     <div class="form-control mt-6">
-                        <button class="btn btn-primary" type="submit">Crea Evento</button>
+                        <button class="btn btn-primary" type="submit" onclick="window.location.href='vistaElenco.html'">Crea Evento</button>
                     </div>
                 </form>
             </div>

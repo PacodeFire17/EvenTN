@@ -2,6 +2,18 @@
 <html lang="it">
 <html data-theme="cupcake"></html>
 <head>
+    <style>
+        html,body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #add8e6;
+        }
+        body{
+            background-color: #add8e6;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
+        }
+    </style>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
     <meta charset="UTF-8">
@@ -11,11 +23,10 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-<body class="bg-gray-100">
+<body class="body">
     <div id="app" class="max-w-4xl mx-auto p-6">
         <div class="card lg:card-side bg-base-100 shadow-xl">
-            <!--:src="event.image"-->
-            <figure><img src="./asiago.jpeg" style="max-width: 250px; max-height: 250px;" alt="Evento" /></figure>
+            <figure><img :src="event.image" style="max-width: 250px; max-height: 250px;" alt="Evento" /></figure>
             <div class="card-body">
                 <h2 class="card-title text-2xl font-semibold">{{ event.title }}</h2>
                 <p class="text-lg text-gray-700">{{ event.description }}</p>
@@ -41,7 +52,7 @@
                 <input type="number" v-model="bookingSeats" class="input input-bordered w-full mb-4" min="1">
                 <div class="flex justify-end space-x-2">
                     <button class="btn btn-secondary" @click="showBookingBanner = false" onclick="window.history.back();">Annulla</button>
-                    <button class="btn btn-primary" @click="confirmBooking" onclick="window.history.back();">Conferma</button>
+                    <button class="btn btn-primary" @click="confirmBooking">Conferma</button>
                 </div>
             </div>
         </div>
@@ -88,7 +99,6 @@
                     }
                 },
                 confirmBooking() {
-                    // Simula la conferma della prenotazione
                     this.showBookingBanner = false;
                     if (this.maxSeats < this.bookingSeats) {
                         this.confirmationMessage = `Hai prenotato troppi posti! Solo ${this.bookingSeats} posti disponibili.`;
@@ -102,4 +112,3 @@
     </script>
 </body>
 </html>
-

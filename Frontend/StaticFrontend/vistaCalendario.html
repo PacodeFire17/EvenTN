@@ -5,17 +5,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calendario Eventi</title>
+    <title>EvenTN</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #add8e6;
+            min-height: 100vh;
+        }
+
+        body {
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif;         }
+
+        header {
+            background-color: #87CEEB; 
+            font-family: 'Poppins', sans-serif;
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+        }
+
         .calendar-container {
             width: 100%;
             max-width: 500px;
             margin: 0 auto;
             aspect-ratio: 1;
         }
-
         .calendar-day {
             width: 40px;
             height: 40px;
@@ -52,31 +72,54 @@
         }
 
         .event-day {
-            background-color: #FF6347; /* Colore rosso per giorni con eventi */
-            color: white;
+            background-color: #FF6347; 
+            color: #B0E0E6;
         }
-
         .event-list {
             margin-top: 20px;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 8px;
-            background-color: #fff;
+            background-color: #3d8cec;
             display: none;
+            text-align: center; 
         }
 
         .event-list.active {
             display: block;
         }
+
+        .gridList {
+        margin: 0 auto;        
+        max-width: 800px;      
+        text-align: center;  
+        }
+
+        .current-view {
+            background-color: #990000;
+            color: #000; 
+            font-weight: bold; 
+        }
+        
     </style>
 </head>
 
-<body class="bg-gray-100">
-    <header class="flex justify-between items-center p-4 bg-white shadow-md">
-        <h1 class="text-3xl font-bold">EvenTN</h1>
+<body class="body">
+    <header class="flex justify-between items-center p-4 bg-blue-400 shadow-md">
+        <h1 class="text-3xl font-bold text-white">EvenTN</h1>
         <div class="flex items-center space-x-4">
-            <button class="btn btn-outline">🌐 Cambia Lingua</button>
-            <button class="btn btn-outline">🔒 Login</button>
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-outline">🌐 Cambia Lingua</label>
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <li>
+                        <a>
+                            <img src="italian_flag.jpeg" alt="Italiano" class="inline w-6 h-4 mr-2">
+                            Italiano
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-outline" onclick="window.location.href='login.html'">🔒 Login</button>
         </div>
     </header>
 
@@ -84,14 +127,14 @@
         <h2 class="text-2xl font-bold mb-6">Quando i prossimi eventi a Trento?</h2>
 
         <!-- Calendario -->
-        <div class="calendar-container bg-white shadow-xl rounded-lg p-6">
+        <div class="calendar-container shadow-xl bg-white rounded-lg p-6">
             <div class="flex justify-between items-center mb-4">
                 <button onclick="changeMonth(-1)" class="btn btn-primary">Precedente</button>
                 <h2 id="month-name" class="text-2xl font-bold"></h2> <!-- Nome mese -->
                 <button onclick="changeMonth(1)" class="btn btn-primary">Successivo</button>
             </div>
 
-            <!-- Nomi dei giorni -->
+            
             <div class="calendar-header">
                 <div class="text-center">Lun</div>
                 <div class="text-center">Mar</div>
@@ -109,17 +152,18 @@
         <!-- Lista eventi sotto il calendario -->
         <div id="event-list-container" class="event-list">
             <h3 class="text-xl font-bold">Eventi per <span id="selected-date"></span></h3>
-            <div id="events-list">
-                <!-- Gli eventi verranno mostrati qui -->
-            </div>
+            <div class="gridList" id="events-list"></div>
         </div>
 
         <div class="fixed bottom-0 left-0 p-4">
             <div class="tripartite-button">
                 <button onclick="window.location.href='vistaElenco.html'" class="btn btn-active btn-secondary">Elenco</button>
                 <button onclick="window.location.href='vistaMappa.html'" class="btn btn-active btn-secondary">Mappa</button>
-                <button onclick="window.location.href='vistaCalendario.html'" class="btn btn-active btn-secondary">Calendario</button>
+                <button onclick="window.location.href='vistaCalendario.html'" class="btn btn-active btn-secondary current-view">Calendario</button>
             </div>
+        </div>
+        <div class="fixed bottom-0 right-0 p-4">
+            <button class="btn btn-outline user-button" onclick="window.location.href='listaEventi.html'">I miei eventi</button>
         </div>
 
     </main>
@@ -130,7 +174,7 @@
             'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'
         ];
 
-        let currentDate = new Date(); // Data corrente
+        let currentDate = new Date();
         const events = [
             { id: 1, date: '2024-12-15', title: 'Concerto di Natale', description: 'Teatro della Musica, Roma' },
             { id: 2, date: '2024-12-20', title: 'Mostra d\'Arte', description: 'Galleria Nazionale, Milano' },
@@ -139,7 +183,8 @@
             { id: 5, date: '2025-01-10', title: 'Mostra di Pittura', description: 'Museo d\'Arte, Milano' },
             { id: 6, date: '2025-01-25', title: 'Conferenza sulla Tecnologia', description: 'Università di Trento' },
             { id: 7, date: '2025-02-10', title: 'Workshop di Fotografia', description: 'Scuola di Arte, Venezia' },
-            { id: 8, date: '2025-02-14', title: 'Cena di San Valentino', description: 'Ristorante Romance, Verona' }
+            { id: 8, date: '2025-02-14', title: 'Cena di San Valentino', description: 'Ristorante Romance, Verona' },
+            { id: 9, date: '2025-02-14', title: 'Cena di San Valentino', description: 'Ristorante Romance, Verona' }
         ];
 
         // Funzione per ottenere i giorni di un mese
@@ -159,7 +204,6 @@
             const calendarDaysElement = document.getElementById('calendar-days');
             const monthNameElement = document.getElementById('month-name');
             
-            // Cambia il nome del mese
             monthNameElement.innerText = `${months[month]} ${year}`;
             
             // Pulisce il calendario precedente
@@ -176,7 +220,7 @@
                 const eventsForDay = events.filter(event => event.date === dayString);
                 const dayClass = eventsForDay.length > 0 ? 'event-day' : '';
 
-                calendarDaysElement.innerHTML += `
+                calendarDaysElement.innerHTML += `  
                     <div class="calendar-day ${dayClass}" onclick="selectDay(${day}, '${dayString}')">
                         ${day}
                     </div>
@@ -192,7 +236,6 @@
 
         // Funzione per selezionare un giorno
         function selectDay(day, date) {
-            // Filtra gli eventi per la data selezionata
             const dayEvents = events.filter(event => event.date === date);
             
             // Mostra la data selezionata
@@ -203,7 +246,7 @@
             if (dayEvents.length > 0) {
                 eventsListElement.innerHTML = dayEvents.map(event => `
                     <div class="mb-4">
-                        <a href="infoEvento.html?id=${event.id}" class="text-blue-500 underline">
+                        <a href="infoEvento.html?id=${event.id}" class="text-black-500">
                             <h3 class="font-bold">${event.title}</h3>
                             <p>${event.description}</p>
                         </a>

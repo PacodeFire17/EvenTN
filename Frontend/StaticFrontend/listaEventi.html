@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="cupcake">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvenTN</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/daisyui@4.12.14/dist/full.min.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@700&display=swap" rel="stylesheet">
+
+    <style>
+        html,body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #add8e6;
+        }
+        body {
+            background-size: cover;
+            background-position: center;
+            background-color: #add8e6;
+            font-family: Cambria, Cochin, Georgia, Times, 'Times New Roman', serif; 
+        }
+        header {
+            background-color: #87CEEB;  
+            font-family: 'Poppins', sans-serif; 
+        }
+        h1 {
+            font-family: 'Poppins', sans-serif; 
+        }
+        .content-box {
+            background-color: rgba(173,216,232, 0.5);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(173, 216, 230, 0.1);
+        }
+        .event-status {
+            font-weight: bold;
+        }
+        .in-programma {
+            color: green;
+        }
+        .concluso {
+            color: red;
+        }
+        .create-event-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #34d399;
+            border-radius: 50%; 
+            width: 60px;  
+            height: 60px; 
+            padding: 0;  
+            color: white;
+            font-size: 2rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;  
+        }
+    </style>
+</head>
+<body class="body">
+    <header class="flex justify-between items-center p-4 bg-blue-400 shadow-md">
+        <h1 class="text-3xl font-bold text-white">EvenTN</h1>
+        <div class="flex items-center space-x-4">
+            <div class="dropdown dropdown-end">
+                <label tabindex="0" class="btn btn-outline">🌐 Cambia Lingua</label>
+                <ul tabindex="0" class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow">
+                    <li>
+                        <a>
+                            <img src="italian_flag.jpeg" alt="Italiano" class="inline w-6 h-4 mr-2">
+                            Italiano
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <button class="btn btn-outline" onclick="window.location.href='vistaElenco.html'">🔍 Esplora Eventi</button>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto p-6">
+        <h2 class="text-3xl font-bold text-center mb-6" id="page-title">I tuoi eventi</h2>
+        <div id="events-list" class="content-box w-full title"></div>
+        <div class="text-center mt-6">
+            <button class="btn btn-outline" onclick="window.history.back()">Indietro</button>
+        </div>
+    </main>
+
+    <script>
+        const isLoggedIn = true;  
+        const accountType = isLoggedIn ? 'organizzatore' : null; 
+        const events = [
+            { id: 1, title: 'Concerto di Natale', date: '2024-12-25', location: 'Teatro della Musica, Roma', needBooking: true, bookedSeats: 50 },
+            { id: 2, title: 'Mostra d\'Arte', date: '2026-12-20', location: 'Galleria Nazionale, Milano', needBooking: false, bookedSeats: 0 },
+            { id: 3, title: 'Cena di Natale', date: '2025-12-25', location: 'Ristorante Il Buon Gusto, Trento', needBooking: true, bookedSeats: 30 }
+        ];
+
+        function renderEvents() {
+            const eventsListElement = document.getElementById('events-list');
+            eventsListElement.innerHTML = '';
+
+            const today = new Date();
+            events.forEach(event => {
+                const eventDate = new Date(event.date);
+                const statusClass = eventDate >= today ? 'in-programma' : 'concluso';
+                const statusText = eventDate >= today ? 'In programma' : 'Concluso';
+
+                let eventHTML = `
+                    <div class="mb-4 p-4 border rounded-lg bg-white shadow-lg flex justify-between items-center">
+                        <div>
+                            <a href="infoEvento.html?id=${event.id}">
+                                <h3 class="text-xl font-bold"><b>${event.title}</b></h3>
+                                <p>${event.date} - ${event.location}</p>
+                            </a>
+                `;
+
+                if (accountType === 'cittadino' && event.needBooking) {
+                    eventHTML += `<p>Posti prenotati: ${event.bookedSeats}</p>`;
+                }
+
+                eventHTML += `
+                        </div>
+                        <div class="event-status ${statusClass}">
+                            ${statusText}
+                        </div>
+                    </div>
+                `;
+                eventsListElement.innerHTML += eventHTML;
+            });
+        }
+
+        function updatePageTitle() {
+            const pageTitle = document.getElementById('page-title');
+            if (accountType === 'cittadino') {
+                pageTitle.textContent = 'Gli eventi a cui partecipi';
+            } else if (accountType === 'organizzatore') {
+                pageTitle.textContent = 'I tuoi eventi';
+            }
+        }
+
+        function showLoginMessage() {
+            const eventsListElement = document.getElementById('events-list');
+            eventsListElement.innerHTML = `
+                <h1 class="text-center text-xl font-semibold">Ooops... sembra tu non sia loggato</h1>
+                <div class="text-center mt-4">
+                    <button class="btn btn-primary mt-4" onclick="window.location.href='login.html'">Accedi</button>
+                </div>
+            `;
+        }
+
+        // Se l'utente è loggato, mostra gli eventi, altrimenti mostra il messaggio di login
+        if (isLoggedIn) {
+            updatePageTitle();
+            renderEvents();
+        } else {
+            showLoginMessage();
+        }
+
+        // Mostra il pulsante "+" solo se l'utente è un organizzatore
+        if (accountType === 'organizzatore') {
+            const createEventButton = document.createElement('button');
+            createEventButton.className = 'create-event-btn';
+            createEventButton.innerHTML = '+';
+            createEventButton.onclick = function() {
+                window.location.href = 'creaEvento.html';
+            };
+            document.body.appendChild(createEventButton);
+        }
+    </script>
+</body>
+</html>

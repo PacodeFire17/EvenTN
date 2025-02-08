@@ -1,7 +1,6 @@
 <script setup>
     import {ref, onMounted} from 'vue';
-    import infoEvento from './infoEvento.vue';
-import { createWebSocketModuleRunnerTransport } from 'vite/module-runner';
+    import infoEvento from '../infoEvento.vue';
     const props = defineProps({
         events: Array
     });

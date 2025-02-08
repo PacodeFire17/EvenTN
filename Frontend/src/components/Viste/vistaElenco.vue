@@ -1,6 +1,6 @@
 <script setup>
     import {ref} from 'vue';
-    import infoEvento from './infoEvento.vue';
+    import infoEvento from '../infoEvento.vue';
     const props = defineProps({
         events: Array
     });
@@ -39,7 +39,7 @@
             <figure><img :src="'data:image/jpeg;base64,'+ event.image" :alt="event.title" /></figure>
             <div class="card-body">
                 <h2 class="card-title">{{ event.name }}</h2>
-                <p>{{ event.location.via }} {{ event.location.number }}, {{ event.location.city }} ({{ event.location.CAP }})</p>
+                <p>{{ event.location.address }}</p>
                 <p>Da {{ event.startDate.day }}/{{ event.startDate.month }}/{{ event.startDate.year }} alle {{ event.startDate.hour }}:{{ event.startDate.minutes }} fino a {{ event.endDate.day }}/{{ event.endDate.month }}/{{ event.endDate.year }} alle {{ event.endDate.hour }}:{{ event.endDate.minutes }}</p>
                 <div class="card-actions justify-end">
                     <button class="btn btn-primary" @click="getEvent(event.id)">Scopri</button>

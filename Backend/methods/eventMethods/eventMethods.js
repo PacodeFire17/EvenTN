@@ -92,7 +92,7 @@ router.post('', async (req, res) => {
           endDate: event.endDate,
           location: event.location,
           description: event.description,
-          image: 'placeholder',
+          image: img,
           needBooking: event.needBooking,
           tags: event.tags,
           maxSeats: event.maxSeats || 0,

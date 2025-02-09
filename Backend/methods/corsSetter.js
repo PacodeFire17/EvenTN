@@ -1,6 +1,6 @@
 function setCors(req, res, next) { // Add headers before the routes are defined
     // Website you wish to allow to connect
-    res.setHeader('Access-Control-Allow-Origin', 'http://127.0.0.1:5173');
+    res.setHeader('Access-Control-Allow-Origin', 'https://eventn-1.onrender.com');
     // Request methods you wish to allow
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
     // Request headers you wish to allow

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "test": "echo this works",
+    "test": "jest --setupFiles dotenv/config",
     "dep": "node index.js",
     "dev": "node -r dotenv/config index.js",
     "init": "node -r dotenv/config ./Test/CreateDB.js"
@@ -27,6 +27,8 @@
     "mongoose": "^8.8.1"
   },
   "devDependencies": {
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }

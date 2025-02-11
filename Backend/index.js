@@ -25,3 +25,16 @@ mongoose.connect(DB_URL).then(()=>{
     app.listen(PORT,()=>{console.log('listening on port: %d', PORT)});
     
 }).catch((err)=>console.log('Failed to connect to database: ' + DB_URL));
+
+module.exports = { app, connectToDatabase: async () => {
+    try {
+        await mongoose.connect(DB_URL, {
+            useNewUrlParser: true,
+            useUnifiedTopology: true,
+        });
+        console.log('Connected to database:', DB_URL);
+    } catch (error) {
+        console.error('Failed to connect to database:', error);
+        process.exit(1);
+    }
+} };
